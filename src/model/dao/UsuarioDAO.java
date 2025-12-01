@@ -8,4 +8,5 @@ public interface UsuarioDAO {
     void deleteById(int id);
     Usuario findById(int id);
     List<Usuario> findAll();
+    Usuario authenticate(String email, String senha);
 }

@@ -6,6 +6,10 @@ public class Usuario {
     private String senha;
     private String email;
 
+
+    public Usuario() {
+    }
+
     public Usuario(int id, String nome, String senha, String email) {
         this.id = id;
         this.nome = nome;

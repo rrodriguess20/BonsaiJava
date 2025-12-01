@@ -8,7 +8,7 @@ public class DB {
     public static Connection getConnection() {
         if (conn == null) {
             try {
-                conn = DriverManager.getConnection("jdbc:postgresql://localhost:5432/bonsai", "user", "password");
+                conn = DriverManager.getConnection("jdbc:postgresql://localhost:5432/bonsai", "postgres", "12345678");
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }

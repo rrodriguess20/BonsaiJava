@@ -17,6 +17,18 @@ public class Venda {
         this.valorTotal = valorTotal;
     }
 
+    public Venda(Usuario usuario, Funcionario funcionario, LocalDateTime dataVenda, int quantidade, double valorTotal) {
+        this.usuario = usuario;
+        this.funcionario = funcionario;
+        this.dataVenda = dataVenda;
+        this.quantidade = quantidade;
+        this.valorTotal = valorTotal;
+    }
+
+    public Venda() {
+    
+    }
+
     public int getId() {
         return id;
     }
@@ -48,5 +60,22 @@ public class Venda {
     public void setValorTotal(double valorTotal) {
         this.valorTotal = valorTotal;
     }
+
+    public Funcionario getFuncionario() {
+        return funcionario;
+    }
+
+    public void setFuncionario(Funcionario funcionario) {
+        this.funcionario = funcionario;
+    }
+
+    public LocalDateTime getDataVenda() {
+        return dataVenda;
+    }
+    public void setDataVenda(LocalDateTime dataVenda) {
+        this.dataVenda = dataVenda;
+    }
+
+
     
 }
