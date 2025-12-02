@@ -1,8 +1,5 @@
 package model.entities;
 
-import model.entities.Usuario;
-
-
 public class Funcionario {
     private int id;
     private String nome;
@@ -58,8 +55,13 @@ public class Funcionario {
     public Usuario getUsuario(){
         return usuario;
     }
-
-    public void setUsuario(Usuario ){
-
+    public void setUsuario(Usuario usuario){
+        this.usuario = usuario;
+    }
+    public String getSenha() {
+        return senha;
+    }
+    public void setSenha(String senha) {
+        this.senha = senha;
     }
 }
