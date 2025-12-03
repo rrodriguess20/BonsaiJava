@@ -29,7 +29,17 @@ public class FuncionarioController {
         String senha = sc.nextLine();
 
         funcionarioService.cadastrarFuncionario(nome, senha, email, cargo);
-        
+
     }
+
+    public void atualizarFuncionario(){
+
+        
+
+    }
+
+    pub
+
+
 
 }
