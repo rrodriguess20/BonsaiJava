@@ -1,10 +1,12 @@
 package model.dao.impl;
 
 
+import model.dao.DaoFactory;
 import model.entities.Venda;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import model.dao.UsuarioDAO;
 
 
 
@@ -18,7 +20,7 @@ public class VendaDAOJDBC implements model.dao.VendaDAO {
 
     @Override
     public void insert(Venda venda) {
-        String sql = "INSERT INTO venda (id_usurio, id_funcionario, data_venda, valor_total) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO venda (id_usurio, id_funcionario, data_venda, total) VALUES (?, ?, ?, ?)";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, venda.getUsuario().getId());
             stmt.setInt(2, venda.getFuncionario().getId());
@@ -31,7 +33,7 @@ public class VendaDAOJDBC implements model.dao.VendaDAO {
     }
 
     public void update(Venda venda) {
-        String sql = "UPDATE venda SET id_usuario = ?, id_funcionario = ?, data_venda = ?, valor_total = ? WHERE id_venda = ?";
+        String sql = "UPDATE venda SET id_usuario = ?, id_funcionario = ?, data_venda = ?, total = ? WHERE id_venda = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, venda.getUsuario().getId());
             stmt.setInt(2, venda.getFuncionario().getId());
@@ -62,7 +64,7 @@ public class VendaDAOJDBC implements model.dao.VendaDAO {
                 Venda venda = new Venda();
                 venda.setId(rs.getInt("id_venda"));
                 venda.setDataVenda(rs.getTimestamp("data_venda").toLocalDateTime());
-                venda.setValorTotal(rs.getDouble("valor_total"));               
+                venda.setValorTotal(rs.getDouble("total"));               
                 UsuarioDAOJDBC usuarioDAO = new UsuarioDAOJDBC(conn);
                 venda.setUsuario(usuarioDAO.findById(rs.getInt("id_usuario")));
                 FuncionarioDAOJDBC funcionarioDAO = new FuncionarioDAOJDBC(conn);
@@ -85,8 +87,8 @@ public class VendaDAOJDBC implements model.dao.VendaDAO {
                 Venda venda = new Venda();
                 venda.setId(rs.getInt("id_venda"));
                 venda.setDataVenda(rs.getTimestamp("data_venda").toLocalDateTime());
-                venda.setValorTotal(rs.getDouble("valor_total"));               
-                UsuarioDAOJDBC usuarioDAO = new UsuarioDAOJDBC(conn);
+                venda.setValorTotal(rs.getDouble("total"));               
+                UsuarioDAO usuarioDAO = DaoFactory.createUsuarioDAO();
                 venda.setUsuario(usuarioDAO.findById(rs.getInt("id_usuario")));
                 FuncionarioDAOJDBC funcionarioDAO = new FuncionarioDAOJDBC(conn);
                 venda.setFuncionario(funcionarioDAO.findById(rs.getInt("id_funcionario")));

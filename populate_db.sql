@@ -6,10 +6,10 @@ VALUES
     ('Juliana Costa', 'juliana.costa@bonsai.com', 'senhaSegura!');
 
 -- FUNCIONÁRIOS
-INSERT INTO Funcionario (nome, cargo, usuario, senha) VALUES
-    ('Ana Clara Souza', 'Delivery', 'ana_delivery', 'senha123'),
-    ('João Pereira Lima', 'Delivery', 'joao_delivery', 'senha456'),
-    ('Carlos Mendes', 'Entrgador', 'carlos_entregador', 'carro789');
+INSERT INTO Funcionario (cargo, id_usuario) VALUES
+    ('Delivery', 1),
+    ('Delivery', 2),
+    ('Entrgador', 3);
 
 -- FORNECEDORES
 INSERT INTO Fornecedor (nome, cnpj, telefone) VALUES

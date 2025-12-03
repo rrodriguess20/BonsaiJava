@@ -16,12 +16,9 @@ public class FuncionarioDAOJDBC implements model.dao.FuncionarioDAO {
     }
 
     public void insert(Funcionario funcionario) {
-        String sql = "INSERT INTO funcionario (nome, cargo, usuario, senha) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO funcionario (cargo) VALUES (?)";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, funcionario.getNome());
-            stmt.setString(2, funcionario.getCargo());
-            stmt.setInt(3, funcionario.getUsuario().getId());
-            stmt.setString(4, funcionario.getSenha());
+            stmt.setString(1, funcionario.getCargo());
             stmt.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -29,13 +26,10 @@ public class FuncionarioDAOJDBC implements model.dao.FuncionarioDAO {
     }
     
     public void update(Funcionario funcionario) {
-        String sql = "UPDATE funcionario SET nome = ?, cargo = ?, usuario = ?, senha = ? WHERE id_funcionario = ?";
+        String sql = "UPDATE funcionario SET cargo = ? WHERE id_funcionario = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, funcionario.getNome());
-            stmt.setString(2, funcionario.getCargo());
-            stmt.setInt(3, funcionario.getUsuario().getId());
-            stmt.setString(4, funcionario.getSenha());
-            stmt.setInt(5, funcionario.getId());
+            stmt.setString(1, funcionario.getCargo());
+            stmt.setInt(2, funcionario.getId());
             stmt.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -60,11 +54,8 @@ public class FuncionarioDAOJDBC implements model.dao.FuncionarioDAO {
             if (rs.next()) {
                 Funcionario funcionario = new Funcionario();
                 funcionario.setId(rs.getInt("id_funcionario"));
-                funcionario.setNome(rs.getString("nome"));
                 funcionario.setCargo(rs.getString("cargo"));
-                UsuarioDAOJDBC usuario = new UsuarioDAOJDBC(conn);
-                funcionario.setUsuario(usuario.findById(rs.getInt("usuario")));
-                funcionario.setSenha(rs.getString("senha"));
+                funcionario.setIdUsuario(rs.getInt("id_usuario"));
                 return funcionario;
             }
         } catch (SQLException e) {
@@ -81,11 +72,8 @@ public class FuncionarioDAOJDBC implements model.dao.FuncionarioDAO {
                 while(rs.next()){
                     Funcionario funcionario = new Funcionario();
                     funcionario.setId(rs.getInt("id_funcionario"));
-                    funcionario.setNome(rs.getString("nome"));
                     funcionario.setCargo(rs.getString("cargo"));
-                    UsuarioDAOJDBC usuario = new UsuarioDAOJDBC(conn);
-                    funcionario.setUsuario(usuario.findById(rs.getInt("usuario")));
-                    funcionario.setSenha(rs.getString("senha"));
+                    funcionario.setIdUsuario(rs.getInt("id_usuario"));
                     funcionarios.add(funcionario);
                 }
                 return funcionarios;

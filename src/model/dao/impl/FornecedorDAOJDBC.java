@@ -11,7 +11,7 @@ import model.entities.Fornecedor;
 public class FornecedorDAOJDBC implements model.dao.FornecedorDAO {
 
     Connection conn;
-    private FornecedorDAOJDBC(Connection conn) {
+    public FornecedorDAOJDBC(Connection conn) {
         this.conn = conn;
     }
     

@@ -7,10 +7,9 @@ CREATE TABLE Usuario (
 
 CREATE TABLE Funcionario (
   id_funcionario SERIAL PRIMARY KEY,
-  nome VARCHAR(100),
+  id_usuario INT,
   cargo VARCHAR(50),
-  usuario VARCHAR(50) UNIQUE,
-  senha VARCHAR(100)
+  FOREIGN KEY (id_usuario) REFERENCES Usuario(id_usuario)
 );
 
 CREATE TABLE Fornecedor (

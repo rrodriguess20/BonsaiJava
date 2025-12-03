@@ -2,31 +2,24 @@ package model.entities;
 
 public class Funcionario {
     private int id;
-    private String nome;
     private String cargo;
-    private Usuario usuario;
-    private String senha;
+    private int id_usuario;
+
     
-    public Funcionario(int id, String nome, String cargo, Usuario usuario, String senha) {
+    public Funcionario(int id, String cargo, int id_usuario) {
         this.id = id;
-        this.nome = nome;
         this.cargo = cargo;
-        this.usuario = usuario;
-        this.senha = senha;
+        this.id_usuario = id_usuario;
     }
 
-     public Funcionario(String nome, String cargo, Usuario usuario, String senha) {
-        this.nome = nome;
+     public Funcionario(String cargo, int id_usuario) {
         this.cargo = cargo;
-        this.usuario = usuario;
-        this.senha = senha;
-    }
+        this.id_usuario = id_usuario;
+     }
 
     public Funcionario(){
 
     }
-
-
 
     public int getId() {
         return id;
@@ -34,14 +27,6 @@ public class Funcionario {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
     }
 
     public String getCargo() {
@@ -52,16 +37,11 @@ public class Funcionario {
         this.cargo = cargo;
     }
 
-    public Usuario getUsuario(){
-        return usuario;
+    public int getIdUsuario(){
+        return id_usuario;
     }
-    public void setUsuario(Usuario usuario){
-        this.usuario = usuario;
+    public void setIdUsuario(int id_usuario){
+        this.id_usuario = id_usuario;
     }
-    public String getSenha() {
-        return senha;
-    }
-    public void setSenha(String senha) {
-        this.senha = senha;
-    }
+
 }

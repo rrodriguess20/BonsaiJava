@@ -2,6 +2,9 @@ import db.DB;
 import java.sql.Connection;
 import java.util.Scanner;
 import model.dao.UsuarioDAO;
+import model.dao.VendaDAO;
+import model.dao.DaoFactory;
+import model.dao.impl.ItemVendaDAOJDBC;
 import model.dao.impl.UsuarioDAOJDBC;
 import model.entities.CLI;
 import model.entities.Usuario;
@@ -111,8 +114,10 @@ public class Main {
         int opcao;
         do {
             System.out.println("\n--- Menu de Vendas ---");
+            System.out.println("Usuário logado: " + usuario.getNome());
             System.out.println("1. Nova Venda");
             System.out.println("2. Consultar Venda");
+            System.out.println("3. Listar Vendas");
             System.out.println("0. Voltar ao Menu Principal");
             System.out.print("Escolha uma opção: ");
 
@@ -124,6 +129,10 @@ public class Main {
                     break;
                 case 2:
                     System.out.println("Consultar Venda selecionada (em desenvolvimento).");
+                    break;
+                case 3:
+                    VendaDAO vendas = DaoFactory.createVendaDAO();
+                    vendas.findAll().forEach(System.out::println);
                     break;
                 case 0:
                     System.out.println("Voltando ao Menu Principal...");
