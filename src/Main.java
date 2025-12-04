@@ -74,7 +74,7 @@ public class Main {
                     System.out.println("Fornecedores selecionado (em desenvolvimento).");
                     break;
                 case 5:
-                    System.out.println("Funcionários selecionado (em desenvolvimento).");
+                    
                     break;
                 case 6:
                     System.out.println("Relatórios selecionado (em desenvolvimento).");
