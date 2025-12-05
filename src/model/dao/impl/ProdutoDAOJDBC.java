@@ -19,12 +19,11 @@ public class ProdutoDAOJDBC implements model.dao.ProdutoDAO{
     
     @Override
     public void insert(Produto produto){
-        String sql = "INSERT INTO produto (nome, preco, categoria, quantidadeEstoque) VALUES (?,?,?,?";
+        String sql = "INSERT INTO produto (nome, preco, categoria) VALUES (?,?,?)";
         try(PreparedStatement stmt = conn.prepareStatement(sql)){
             stmt.setString(1, produto.getNome());
             stmt.setDouble(2, produto.getPreco());
             stmt.setString(3, produto.getCategoria());
-            stmt.setInt(4, produto.getQuantidadeEstoque());
             stmt.executeUpdate();
         }catch(SQLException e){
             throw new RuntimeException("Erro ao cadastrar produto: " + e);
@@ -32,12 +31,11 @@ public class ProdutoDAOJDBC implements model.dao.ProdutoDAO{
     }
 
     public void update(Produto produto){
-        String sql = "UPDATE produto SET nome = ?, preco = ?, categoria = ?, quantitadeEstoque = ? WHERE id = ? ";
+        String sql = "UPDATE produto SET nome = ?, preco = ?, categoria = ? WHERE id = ? ";
         try(PreparedStatement stmt = conn.prepareStatement(sql)){
             stmt.setString(1, produto.getNome());
             stmt.setDouble(2, produto.getPreco());
             stmt.setString(3, produto.getCategoria());
-            stmt.setInt(4, produto.getQuantidadeEstoque());
             stmt.setInt(5, produto.getId());
             stmt.executeUpdate();
         }catch(SQLException e){
@@ -67,7 +65,6 @@ public class ProdutoDAOJDBC implements model.dao.ProdutoDAO{
                 produto.setNome(rs.getString("nome"));
                 produto.setPreco(rs.getDouble("preco"));
                 produto.setCategoria(rs.getString("categoria"));
-                produto.setQuantidadeEstoque(rs.getInt("quantidadeEstoque"));
                 return produto; 
             }
         }catch(SQLException e){
@@ -87,7 +84,6 @@ public class ProdutoDAOJDBC implements model.dao.ProdutoDAO{
                 produto.setNome(rs.getString("nome"));
                 produto.setPreco(rs.getDouble("preco"));
                 produto.setCategoria(rs.getString("categoria"));
-                produto.setQuantidadeEstoque(rs.getInt("quantidadeEstoque"));
                 produtos.add(produto);
             }
         }catch(SQLException e){

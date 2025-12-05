@@ -15,7 +15,7 @@ public class FornecedorDAOJDBC implements model.dao.FornecedorDAO {
         this.conn = conn;
     }
     
-    public void insert(model.entities.Fornecedor fornecedor) {
+    public void insert(Fornecedor fornecedor) {
         String sql = "INSERT INTO fornecedor (nome, cnpj, telefone) VALUES (?, ?, ?)";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, fornecedor.getNome());
@@ -27,7 +27,7 @@ public class FornecedorDAOJDBC implements model.dao.FornecedorDAO {
         }    
     }
 
-    public void update(model.entities.Fornecedor fornecedor) {
+    public void update(Fornecedor fornecedor) {
         String sql = "UPDATE fornecedor SET nome = ?, cnpj = ?, telefone = ? WHERE id_fornecedor = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, fornecedor.getNome());

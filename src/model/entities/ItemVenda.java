@@ -2,37 +2,46 @@ package model.entities;
 
 public class ItemVenda {
     private int id;
-    private int vendaId;
-    private int produtoId;
+    private int id_venda;
+    private int id_produto;
     private int quantidade;
-    private double precoUnitario;
+    private double preco_unitario;
     private double subtotal;
 
-    public ItemVenda(int id_item_venda, int id_venda, int id_produto, int quantidade, double preco_unitario) {
-        this.id_item_venda = id_item_venda;
+    public ItemVenda(int id, int id_venda, int id_produto, int quantidade, double preco_unitario, double subtotal) {
+        this.id = id;
         this.id_venda = id_venda;
         this.id_produto = id_produto;
         this.quantidade = quantidade;
         this.preco_unitario = preco_unitario;
+        this.subtotal = subtotal;
     }
 
-    public ItemVenda(int id_venda, int id_produto, int quantidade, double preco_unitario) {
+    public ItemVenda(int id_venda, int id_produto, int quantidade, double preco_unitario, double subtotal) {
         this.id_venda = id_venda;
         this.id_produto = id_produto;
         this.quantidade = quantidade;
         this.preco_unitario = preco_unitario;
+        this.subtotal = subtotal;
+    }
+    public double getSubtotal() {
+        return subtotal;
+    }
+
+    public void setSubtotal(double subtotal) {
+        this.subtotal = subtotal;
     }
 
     public ItemVenda() {
         
     }
 
-    public int getId_item_venda() {
-        return id_item_venda;
+    public int getId() {
+        return id;
     }
 
-    public void setId_item_venda(int id_item_venda) {
-        this.id_item_venda = id_item_venda;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public int getId_venda() {

@@ -1,6 +1,7 @@
 package model.entities;
 
 public class Funcionario {
+
     private int id;
     private String cargo;
     private int id_usuario;
@@ -8,8 +9,8 @@ public class Funcionario {
     
     public Funcionario(int id, String cargo, int id_usuario) {
         this.id = id;
-        this.cargo = cargo;
         this.id_usuario = id_usuario;
+        this.cargo = cargo;
     }
 
      public Funcionario(String cargo, int id_usuario) {

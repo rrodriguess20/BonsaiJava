@@ -35,13 +35,13 @@ public class ItemVendaDAOJDBC implements ItemVendaDAO {
     }
 
     public void update(ItemVenda itemVenda) {
-        String sql = "UPDATE item_venda SET venda_id = ?, produto_id = ?, quantidade = ?, preco_unitario = ? WHERE id_item_venda = ?";
+        String sql = "UPDATE item_venda SET venda_id = ?, produto_id = ?, quantidade = ?, preco_unitario = ? WHERE id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, itemVenda.getId_venda());
             stmt.setInt(2, itemVenda.getId_produto());
             stmt.setInt(3, itemVenda.getQuantidade());
             stmt.setDouble(4, itemVenda.getPreco_unitario());
-            stmt.setInt(5, itemVenda.getId_item_venda());
+            stmt.setInt(5, itemVenda.getId());
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
