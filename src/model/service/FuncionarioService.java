@@ -3,11 +3,9 @@ package model.service;
 
 import model.entities.Usuario;
 import model.entities.Funcionario;
-
 import java.util.List;
-
 import model.dao.FuncionarioDAO;
-import model.dao.UsuarioDAO;
+
 
 
 
@@ -22,22 +20,23 @@ public class FuncionarioService {
         this.usuarioService = usuarioService;
 
     }
-
+    //Create
     public void cadastrarFuncionario(String nome, String senha, String email, String cargo) {
        
         Usuario usuario = usuarioService.cadastrarUsuario(nome, senha, email);
         Funcionario funcionario = new Funcionario(cargo, usuario.getId());
         funcionarioDAO.insert(funcionario);
     }
-
+    // Update
     public void atualizarFuncionario(Funcionario funcionario) {
         funcionarioDAO.update(funcionario);
     }
-
+    // Delete
     public void deletarFuncionario(int id) {
         funcionarioDAO.deleteById(id);
     }
 
+    //Read
     public Funcionario buscarFuncionarioPorId(int id) {
         return funcionarioDAO.findById(id);
     }

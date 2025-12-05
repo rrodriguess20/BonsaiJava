@@ -1,11 +1,12 @@
 package model.entities;
 
 public class ItemVenda {
-    private int id_item_venda;
-    private int id_venda;
-    private int id_produto;
+    private int id;
+    private int vendaId;
+    private int produtoId;
     private int quantidade;
-    private double preco_unitario;
+    private double precoUnitario;
+    private double subtotal;
 
     public ItemVenda(int id_item_venda, int id_venda, int id_produto, int quantidade, double preco_unitario) {
         this.id_item_venda = id_item_venda;

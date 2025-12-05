@@ -43,7 +43,7 @@ public class FuncionarioDAOJDBC implements model.dao.FuncionarioDAO {
             stmt.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
-        }
+        }Q
     }
 
     public Funcionario findById(int id) {

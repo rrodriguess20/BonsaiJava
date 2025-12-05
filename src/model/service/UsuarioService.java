@@ -2,6 +2,7 @@ package model.service;
 
 import model.dao.UsuarioDAO;
 import model.entities.Usuario;
+import java.util.List;
 
 public class UsuarioService {
 
@@ -11,14 +12,20 @@ public class UsuarioService {
         this.usuarioDAO = usuarioDAO;
     }
     //Create
-    public void cadastrarUsuario(String nome, String senha, String email) {
+    public Usuario cadastrarUsuario(String nome, String senha, String email) {
         Usuario usuario = new Usuario(nome, email, senha);
         usuarioDAO.insert(usuario);
+        return usuario;
     }
 
     //Read
-    public Usuario buscarUsuario(int id){
-        return usuarioDao.findById(id);
+    public Usuario buscarUsuario(Usuario usuario){
+        return usuarioDAO.findById(usuario.getId());
+    }
+
+    public List<Usuario> listarTodos(){
+        List<Usuario> listaUsuarios = usuarioDAO.findAll();
+        return listaUsuarios;
     }
 
     //Update
@@ -27,11 +34,8 @@ public class UsuarioService {
     }
 
     //Delete
-    public void excluirUsuario(Usuario usuario){
-        usuarioDAO.delete
+    public void excluirUsuarioQ(Usuario usuario){
+        usuarioDAO.deleteById(usuario.getId());
     }
-
-
-
     
 }
