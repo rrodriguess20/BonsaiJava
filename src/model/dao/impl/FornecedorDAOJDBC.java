@@ -91,4 +91,49 @@ public class FornecedorDAOJDBC implements model.dao.FornecedorDAO {
         }
         return null;
     }
+
+    public Fornecedor findByCnpj(String cnpj) {
+        String sql = "SELECT * FROM fornecedor WHERE cnpj = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, cnpj);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                Fornecedor fornecedor = new Fornecedor();
+                fornecedor.setId(rs.getInt("id_fornecedor"));
+                fornecedor.setNome(rs.getString("nome"));
+                fornecedor.setCnpj(rs.getString("cnpj"));
+                fornecedor.setTelefone(rs.getString("telefone"));
+                return fornecedor;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+    }
+
+    
+        return null;
+    }
+
+    public List<Fornecedor> findByName(String nome) {
+        List<Fornecedor> fornecedores = new java.util.ArrayList<>();
+        String sql = "SELECT * FROM fornecedor WHERE nome LIKE ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, "%" + nome + "%");
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Fornecedor fornecedor = new Fornecedor();
+                fornecedor.setId(rs.getInt("id_fornecedor"));
+                fornecedor.setNome(rs.getString("nome"));
+                fornecedor.setCnpj(rs.getString("cnpj"));
+                fornecedor.setTelefone(rs.getString("telefone"));
+                fornecedores.add(fornecedor);
+            }
+            return fornecedores;
+        } catch (SQLException e) {
+            e.printStackTrace();
+
+
+
+        }
+        return null;
+    }
 }

@@ -6,9 +6,6 @@ import model.entities.Funcionario;
 import java.util.List;
 import model.dao.FuncionarioDAO;
 
-
-
-
 public class FuncionarioService {
 
 

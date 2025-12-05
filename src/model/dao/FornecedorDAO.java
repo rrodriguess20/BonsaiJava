@@ -8,5 +8,7 @@ public interface FornecedorDAO {
     void update(Fornecedor fornecedor);
     void deleteById(int id);
     Fornecedor findById(int id);
+    Fornecedor findByCnpj(String cnpj);
+    List<Fornecedor> findByName(String nome);
     List<Fornecedor> findAll();
 }
