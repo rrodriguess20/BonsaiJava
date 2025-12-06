@@ -4,11 +4,11 @@ import model.dao.ItemVendaDAO;
 import model.entities.ItemVenda;
 import java.util.List;
 
-public class ItemVentaService {
+public class ItemVendaService {
 
     private ItemVendaDAO itemVendaDAO;
 
-    public ItemVentaService(ItemVendaDAO itemVentaDAO){
+    public ItemVendaService(ItemVendaDAO itemVentaDAO){
         this.itemVendaDAO = itemVentaDAO;
     }
 

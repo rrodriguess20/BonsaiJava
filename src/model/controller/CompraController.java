@@ -1,0 +1,53 @@
+package model.controller;
+
+import java.time.LocalDate;
+import java.util.Scanner;
+
+import model.entities.Compra;
+import model.service.CompraService;
+
+public class CompraController {
+
+    private  CompraService compraService;
+
+    private final Scanner sc = new Scanner(System.in);
+
+    public CompraController(CompraService compraService) {
+        this.compraService = compraService;
+    }
+
+    public void cadastrarCompra(){
+
+        System.out.println("Insira o id do fornecedor:");
+        int id_fornecedor = sc.nextInt();
+        System.out.println("Insira o valor total da compra:");
+        double valor_total = sc.nextDouble();
+
+        //Valores automáticos
+        LocalDate data_compra = LocalDate.now();
+
+        //Criar objeto Compra
+        Compra compra = new Compra();
+        compra.setIdFornecedor(id_fornecedor);
+        compra.setValorTotal(valor_total);
+        compra.setDataCompra(data_compra);
+
+        compraService.cadastrarCompra(compra);
+    }
+
+    public void atualizarCompra(){
+        System.out.println("Digite o id da compra que  deseja atualizar:");
+        int id = Integer.parseInt(sc.nextLine());
+        var compra = compraService.buscarCompraPorId(id);
+        if(compra == null){
+            System.out.println("Compra não encontrada.");
+            return;
+        }
+
+        System.out.println("Digite o valor total da compra:");
+        double valor_total = sc.nextDouble();
+        compra.setValorTotal(valor_total);
+        compraService.atualizarCompra(compra);
+        System.out.println("Compra atualizada com sucesso!");
+    }
+}
