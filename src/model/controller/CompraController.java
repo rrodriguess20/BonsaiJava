@@ -50,4 +50,12 @@ public class CompraController {
         compraService.atualizarCompra(compra);
         System.out.println("Compra atualizada com sucesso!");
     }
+
+    public void listarCompra(){
+
+        var compras = compraService.listarTodasCompras();
+        for(var comp : compras){
+            System.out.println(comp);
+        }
+    }
 }
