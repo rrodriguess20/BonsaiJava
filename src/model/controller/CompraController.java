@@ -58,4 +58,22 @@ public class CompraController {
             System.out.println(comp);
         }
     }
+
+    public void deletarCompra(){
+        System.out.println("Digite o id da compra que deseja deletar:");
+        int id = Integer.parseInt(sc.nextLine());
+        compraService.deletarCompra(id);
+        System.out.println("Compra deletada com sucesso!");
+    }
+
+    public void buscarCompraPorId(){
+        System.out.println("Digite o id da compra que deseja buscar:");
+        int id = Integer.parseInt(sc.nextLine());
+        var compra = compraService.buscarCompraPorId(id);
+        if(compra == null){
+            System.out.println("Compra não encontrada.");
+            return;
+        }
+        System.out.println(compra);
+    }
 }
