@@ -1,5 +1,7 @@
 package model.entities;
 
+import model.exceptions.InputFormatException;
+
 public class Fornecedor extends Pessoa {
     private int id;
     private String nome;
@@ -8,6 +10,9 @@ public class Fornecedor extends Pessoa {
 
     public Fornecedor(int id, String nome, String cnpj, String telefone) {
         super(nome, telefone);
+        if(id <= 0){
+            throw new InputFormatException("Id inválido");
+        }
         this.id = id;
         this.cnpj = cnpj;
     }

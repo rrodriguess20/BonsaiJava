@@ -1,11 +1,20 @@
 package model.entities;
 
+import model.exceptions.InputFormatException;
+
 public abstract class Pessoa {
 
     private String nome;
     private String telefone;
 
     public Pessoa(String nome, String telefone) {
+
+        if(nome == null || nome.isBlank()) {
+            throw new InputFormatException("Nome inválido");
+        }
+        if(telefone == null || telefone.isBlank()|| telefone.length()!=11) {
+            throw new InputFormatException("Telefone inválido");
+        }
         this.nome = nome;
         this.telefone = telefone;
     }

@@ -1,5 +1,7 @@
 package model.entities;
 
+import model.exceptions.InputFormatException;
+
 public class Funcionario extends Pessoa {
 
     private String nome;
@@ -9,16 +11,29 @@ public class Funcionario extends Pessoa {
     private int id_usuario;
     private double salario;
 
-    public Funcionario(String nome, String telefone, int id, String cargo, int id_usuario, double salario) {
+    public Funcionario(String nome, String telefone, int id, String cargo, int id_usuario, double salario) throws InputFormatException {
         super(nome, telefone);
+
+        if(id <= 0){
+            throw new InputFormatException("Id inválido");
+        }
+
         this.id = id;
         this.cargo = cargo;
+
+        if(id_usuario <= 0){
+            throw new InputFormatException("Id de Usuário inválido");
+        }
         this.id_usuario = id_usuario;
         this.salario = salario;
     }
 
      public Funcionario(String cargo, int id_usuario) {
         this.cargo = cargo;
+
+         if(id_usuario <= 0){
+             throw new InputFormatException("Id de Usuário inválido");
+         }
         this.id_usuario = id_usuario;
      }
 
