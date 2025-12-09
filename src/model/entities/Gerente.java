@@ -1,6 +1,6 @@
 package model.entities;
 
-public class Funcionario extends Pessoa {
+public class Gerente extends Funcionario {
 
     private String nome;
     private String telefone;
@@ -9,27 +9,18 @@ public class Funcionario extends Pessoa {
     private int id_usuario;
     private double salario;
 
-    public Funcionario(String nome, String telefone, int id, String cargo, int id_usuario, double salario) {
-        super(nome, telefone);
+    public Gerente(String nome, String telefone, int id, String cargo, int id_usuario) {
+        this.nome = nome;
+        this.telefone = telefone;
         this.id = id;
         this.cargo = cargo;
         this.id_usuario = id_usuario;
-        this.salario = salario;
     }
 
-     public Funcionario(String cargo, int id_usuario) {
-        this.cargo = cargo;
-        this.id_usuario = id_usuario;
-     }
-
-    public Funcionario(){
-
-    }
-
-    //Overrides
     public String getNome() {
         return nome;
     }
+
     public void setNome(String nome) {
         this.nome = nome;
     }
@@ -41,8 +32,6 @@ public class Funcionario extends Pessoa {
     public void setTelefone(String telefone) {
         this.telefone = telefone;
     }
-
-    //Getters e setters
 
     public int getId() {
         return id;
@@ -60,18 +49,17 @@ public class Funcionario extends Pessoa {
         this.cargo = cargo;
     }
 
-    public int getIdUsuario(){
+    public int getIdUsuario() {
         return id_usuario;
     }
-    public void setIdUsuario(int id_usuario){
+
+    public void setIdUsuario(int id_usuario) {
         this.id_usuario = id_usuario;
     }
 
+    @Override
     public double getSalario() {
-        return salario;
-    }
 
-    public void setSalario(double salario) {
-        this.salario = salario;
+        return salario*0.2;
     }
 }

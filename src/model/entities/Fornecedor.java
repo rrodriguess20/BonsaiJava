@@ -1,35 +1,27 @@
 package model.entities;
 
-public class Fornecedor {
+public class Fornecedor extends Pessoa {
     private int id;
     private String nome;
     private String cnpj;
     private String telefone;
 
     public Fornecedor(int id, String nome, String cnpj, String telefone) {
+        super(nome, telefone);
         this.id = id;
-        this.nome = nome;
         this.cnpj = cnpj;
-        this.telefone = telefone;
     }
 
-    public Fornecedor(String nome, String cnpj, String telefone){
-        this.nome = nome;
+    public Fornecedor(String nome, String telefone, String cnpj){
+        super(nome, telefone);
         this.cnpj = cnpj;
-        this.telefone = telefone;
     }
 
     public Fornecedor(){
-        
+
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
+    //Overrides
 
     public String getNome() {
         return nome;
@@ -37,6 +29,24 @@ public class Fornecedor {
 
     public void setNome(String nome) {
         this.nome = nome;
+    }
+
+    public String getTelefone() {
+        return telefone;
+    }
+
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
+    }
+
+    //Getters e setters da classe
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getCnpj() {
@@ -47,12 +57,5 @@ public class Fornecedor {
         this.cnpj = cnpj;
     }
 
-    public String getTelefone() {
-        return telefone;
-    }
-
-    public void setTelefone(String telefone) {
-        this.telefone = telefone;
-    }
     }
 
