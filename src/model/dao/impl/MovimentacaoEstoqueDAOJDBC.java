@@ -2,11 +2,15 @@ package model.dao.impl;
 
 import model.dao.MovimentacaoEstoqueDAO;
 import model.entities.MovimentacaoEstoque;
-import java.util.List;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MovimentacaoEstoqueDAOJDBC implements MovimentacaoEstoqueDAO {
     
@@ -20,10 +24,10 @@ public class MovimentacaoEstoqueDAOJDBC implements MovimentacaoEstoqueDAO {
     public void insert(MovimentacaoEstoque movimentacao) {
         String sql = "INSERT INTO movimentacao_estoque (produto_id, quantidade, tipo, data) VALUES (?, ?, ?, ?)";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, movimentacao.getProdutoId());
+            stmt.setInt(1, movimentacao.getIdProduto());
             stmt.setInt(2, movimentacao.getQuantidade());
-            stmt.setString(3, movimentacao.getTipo());
-            stmt.setDate(4, new java.sql.Date(movimentacao.getData().getTime()));
+            stmt.setString(3, movimentacao.getTipoMovimentacao());
+            stmt.setTimestamp(4, toTimestamp(movimentacao.getDataMovimentacao()));
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -39,10 +43,10 @@ public class MovimentacaoEstoqueDAOJDBC implements MovimentacaoEstoqueDAO {
             while (rs.next()) {
                 MovimentacaoEstoque movimentacao = new MovimentacaoEstoque();
                 movimentacao.setId(rs.getInt("id"));
-                movimentacao.setProdutoId(rs.getInt("produto_id"));
+                movimentacao.setIdProduto(rs.getInt("produto_id"));
                 movimentacao.setQuantidade(rs.getInt("quantidade"));
-                movimentacao.setTipo(rs.getString("tipo"));
-                movimentacao.setData(rs.getDate("data"));
+                movimentacao.setTipoMovimentacao(rs.getString("tipo"));
+                movimentacao.setDataMovimentacao(toLocalDateTime(rs.getTimestamp("data")));
                 movimentacoes.add(movimentacao);
             }
         } catch (SQLException e) {
@@ -51,6 +55,60 @@ public class MovimentacaoEstoqueDAOJDBC implements MovimentacaoEstoqueDAO {
         return movimentacoes;
     }
 
+    @Override
+    public MovimentacaoEstoque findById(int id) {
+        String sql = "SELECT * FROM movimentacao_estoque WHERE id = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                MovimentacaoEstoque movimentacao = new MovimentacaoEstoque();
+                movimentacao.setId(rs.getInt("id"));
+                movimentacao.setIdProduto(rs.getInt("produto_id"));
+                movimentacao.setQuantidade(rs.getInt("quantidade"));
+                movimentacao.setTipoMovimentacao(rs.getString("tipo"));
+                movimentacao.setDataMovimentacao(toLocalDateTime(rs.getTimestamp("data")));
+                return movimentacao;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
+        return null;
+    }
 
+    @Override
+    public void update(MovimentacaoEstoque movimentacao) {
+        String sql = "UPDATE movimentacao_estoque SET produto_id = ?, quantidade = ?, tipo = ?, data = ? WHERE id = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, movimentacao.getIdProduto());
+            stmt.setInt(2, movimentacao.getQuantidade());
+            stmt.setString(3, movimentacao.getTipoMovimentacao());
+            stmt.setTimestamp(4, toTimestamp(movimentacao.getDataMovimentacao()));
+            stmt.setInt(5, movimentacao.getId());
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+
+        }
+    }
+
+    @Override
+    public void deleteById(int id) {
+        String sql = "DELETE FROM movimentacao_estoque WHERE id = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private Timestamp toTimestamp(LocalDateTime dateTime) {
+        return dateTime == null ? null : Timestamp.valueOf(dateTime);
+    }
+
+    private LocalDateTime toLocalDateTime(Timestamp timestamp) {
+        return timestamp == null ? null : timestamp.toLocalDateTime();
+    }
 }

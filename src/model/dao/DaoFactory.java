@@ -16,6 +16,10 @@ public class DaoFactory {
         return new FuncionarioDAOJDBC(DB.getConnection());
     }
 
+    public static CompraDAO createCompraDAO() {
+        return new CompraDAOJDBC(DB.getConnection());
+    }
+
     public static VendaDAO createVendaDAO() {
         return new VendaDAOJDBC(DB.getConnection());
     }

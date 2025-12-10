@@ -29,11 +29,11 @@ public class Funcionario extends Pessoa {
     }
 
      public Funcionario(String cargo, int id_usuario) {
-        this.cargo = cargo;
-
-         if(id_usuario <= 0){
+        
+        if(id_usuario <= 0){
              throw new InputFormatException("Id de Usuário inválido");
-         }
+        }
+        this.cargo = cargo;
         this.id_usuario = id_usuario;
      }
 

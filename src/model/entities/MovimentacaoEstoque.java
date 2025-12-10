@@ -1,17 +1,20 @@
 package model.entities;
 
+import java.time.LocalDateTime;
+
 public class MovimentacaoEstoque {
 
     private int id;
     private int id_produto;
     private int quantidade;
     private String tipo_movimentacao;
-    private String data_movimentacao;
+    private LocalDateTime data_movimentacao;
 
     public MovimentacaoEstoque() {
+
     }
 
-    public MovimentacaoEstoque(int id, int id_produto, int quantidade, String tipo_movimentacao, String data_movimentacao) {
+    public MovimentacaoEstoque(int id, int id_produto, int quantidade, String tipo_movimentacao, LocalDateTime data_movimentacao) {
         this.id = id;
         this.id_produto = id_produto;
         this.quantidade = quantidade;
@@ -51,11 +54,11 @@ public class MovimentacaoEstoque {
         this.tipo_movimentacao = tipo_movimentacao;
     }
 
-    public String getDataMovimentacao() {
+    public LocalDateTime getDataMovimentacao() {
         return data_movimentacao;
     }
 
-    public void setDataMovimentacao(String data_movimentacao) {
+    public void setDataMovimentacao(LocalDateTime data_movimentacao) {
         this.data_movimentacao = data_movimentacao;
     }
 }
