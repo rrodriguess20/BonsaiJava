@@ -2,16 +2,18 @@ package model.controller;
 
 import java.util.Scanner;
 import model.service.FuncionarioService;
-
+import model.service.UsuarioService;
 
 public class FuncionarioController {
 
     private FuncionarioService funcionarioService;
+    private UsuarioService usuarioService;
 
     private final Scanner sc = new Scanner(System.in);
 
-    public FuncionarioController(FuncionarioService funcionarioService) {
+    public FuncionarioController(FuncionarioService funcionarioService, UsuarioService usuarioService) {
         this.funcionarioService = funcionarioService;
+        this.usuarioService = usuarioService;
     }
 
     public void cadastrarNovoFuncionario(){
@@ -48,7 +50,7 @@ public class FuncionarioController {
     public void listarFuncionarios(){
         var funcionarios = funcionarioService.listarFuncionarios();
         for(var func : funcionarios){
-            System.out.println(func);
+            System.out.println(func.getId() + " - " + usuarioService.buscarUsuarioPorId(func.getIdUsuario()).getNome() + " - " + func.getCargo());
         }
     }
 

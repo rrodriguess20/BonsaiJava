@@ -30,7 +30,9 @@ public class FuncionarioService {
     }
     // Delete
     public void deletarFuncionario(int id) {
+        int usuarioId = funcionarioDAO.findById(id).getIdUsuario();
         funcionarioDAO.deleteById(id);
+        usuarioService.excluirUsuario(usuarioService.buscarUsuarioPorId(usuarioId));
     }
 
     //Read

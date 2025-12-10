@@ -33,7 +33,7 @@ public class Main {
         VendaService vendaService = new VendaService(DaoFactory.createVendaDAO());
 
         FornecedorController fornecedorController = new FornecedorController(fornecedorService);
-        FuncionarioController funcionarioController = new FuncionarioController(funcionarioService);
+        FuncionarioController funcionarioController = new FuncionarioController(funcionarioService, usuarioService);
         CompraController compraController = new CompraController(compraService);
         VendaController vendaController = new VendaController(vendaService, funcionarioService);
 

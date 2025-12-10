@@ -16,9 +16,10 @@ public class FuncionarioDAOJDBC implements model.dao.FuncionarioDAO {
     }
 
     public void insert(Funcionario funcionario) {
-        String sql = "INSERT INTO funcionario (cargo) VALUES (?)";
+        String sql = "INSERT INTO funcionario (cargo, id_usuario) VALUES (?, ?)";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, funcionario.getCargo());
+            stmt.setInt(2, funcionario.getIdUsuario());
             stmt.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -26,7 +27,7 @@ public class FuncionarioDAOJDBC implements model.dao.FuncionarioDAO {
     }
     
     public void update(Funcionario funcionario) {
-        String sql = "UPDATE funcionario SET cargo = ? WHERE id_funcionario = ?";
+        String sql = "UPDATE funcionario SET cargo = ? WHERE id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, funcionario.getCargo());
             stmt.setInt(2, funcionario.getId());
@@ -37,7 +38,7 @@ public class FuncionarioDAOJDBC implements model.dao.FuncionarioDAO {
     }
 
     public void deleteById(int id) {
-        String sql = "DELETE FROM funcionario WHERE id_funcionario = ?";
+        String sql = "DELETE FROM funcionario WHERE id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
             stmt.executeUpdate();
@@ -47,13 +48,13 @@ public class FuncionarioDAOJDBC implements model.dao.FuncionarioDAO {
     }
 
     public Funcionario findById(int id) {
-        String sql = "SELECT * FROM funcionario WHERE id_funcionario = ?";
+        String sql = "SELECT * FROM funcionario WHERE id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 Funcionario funcionario = new Funcionario();
-                funcionario.setId(rs.getInt("id_funcionario"));
+                funcionario.setId(rs.getInt("id"));
                 funcionario.setCargo(rs.getString("cargo"));
                 funcionario.setIdUsuario(rs.getInt("id_usuario"));
                 return funcionario;
@@ -71,7 +72,7 @@ public class FuncionarioDAOJDBC implements model.dao.FuncionarioDAO {
             ResultSet rs = stmt.executeQuery(sql)){
                 while(rs.next()){
                     Funcionario funcionario = new Funcionario();
-                    funcionario.setId(rs.getInt("id_funcionario"));
+                    funcionario.setId(rs.getInt("id"));
                     funcionario.setCargo(rs.getString("cargo"));
                     funcionario.setIdUsuario(rs.getInt("id_usuario"));
                     funcionarios.add(funcionario);

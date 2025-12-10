@@ -13,14 +13,14 @@ public class UsuarioService {
     }
     //Create
     public Usuario cadastrarUsuario(String nome, String senha, String email) {
-        Usuario usuario = new Usuario(nome, email, senha);
+        Usuario usuario = new Usuario(nome, senha, email);
         usuarioDAO.insert(usuario);
         return usuario;
     }
 
     //Read
-    public Usuario buscarUsuario(Usuario usuario){
-        return usuarioDAO.findById(usuario.getId());
+    public Usuario buscarUsuarioPorId(int id){
+        return usuarioDAO.findById(id);
     }
 
     public List<Usuario> listarTodos(){
@@ -34,7 +34,7 @@ public class UsuarioService {
     }
 
     //Delete
-    public void excluirUsuarioQ(Usuario usuario){
+    public void excluirUsuario(Usuario usuario){
         usuarioDAO.deleteById(usuario.getId());
     }
     

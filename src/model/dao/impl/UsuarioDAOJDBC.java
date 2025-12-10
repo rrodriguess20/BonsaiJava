@@ -39,7 +39,7 @@ public class UsuarioDAOJDBC implements UsuarioDAO {
 
     @Override
     public void update(Usuario usuario) {
-        String sql = "UPDATE usuario SET nome = ?, email = ?, senha = ? WHERE id_usuario = ?";
+        String sql = "UPDATE usuario SET nome = ?, email = ?, senha = ? WHERE id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, usuario.getNome());
             stmt.setString(2, usuario.getEmail());
@@ -53,7 +53,7 @@ public class UsuarioDAOJDBC implements UsuarioDAO {
 
     @Override
     public void deleteById(int id) {
-        String sql = "DELETE FROM usuario WHERE id_usuario = ?";
+        String sql = "DELETE FROM usuario WHERE id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
             stmt.executeUpdate();
@@ -65,7 +65,7 @@ public class UsuarioDAOJDBC implements UsuarioDAO {
     @Override
     public List<Usuario> findAll() {
         List<Usuario> usuarios = new ArrayList<>();
-        String sql = "SELECT id_usuario, nome, email, senha FROM usuario";
+        String sql = "SELECT id, nome, email, senha FROM usuario";
         try (Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
@@ -79,7 +79,7 @@ public class UsuarioDAOJDBC implements UsuarioDAO {
 
     @Override
     public Usuario findById(int id) {
-        String sql = "SELECT id_usuario, nome, email, senha FROM usuario WHERE id_usuario = ?";
+        String sql = "SELECT id, nome, email, senha FROM usuario WHERE id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
             try (ResultSet rs = stmt.executeQuery()) {
@@ -95,7 +95,7 @@ public class UsuarioDAOJDBC implements UsuarioDAO {
 
     @Override
     public Usuario authenticate(String email, String senha) {
-        String sql = "SELECT id_usuario, nome, email, senha FROM usuario WHERE email = ? AND senha = ?";
+        String sql = "SELECT id, nome, email, senha FROM usuario WHERE email = ? AND senha = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, email);
             stmt.setString(2, senha);
@@ -112,7 +112,7 @@ public class UsuarioDAOJDBC implements UsuarioDAO {
 
     private Usuario instantiateUsuario(ResultSet rs) throws SQLException {
         return new Usuario(
-            rs.getInt("id_usuario"),
+            rs.getInt("id"),
             rs.getString("nome"),
             rs.getString("senha"),
             rs.getString("email")
