@@ -1,6 +1,9 @@
 package model.controller;
 
 import java.util.Scanner;
+
+import model.entities.Funcionario;
+import model.entities.Usuario;
 import model.service.FuncionarioService;
 import model.service.UsuarioService;
 
@@ -32,17 +35,41 @@ public class FuncionarioController {
     }
 
     public void atualizarFuncionario(){
-        
+
+        listarFuncionarios();
+
         System.out.println("Digite o ID do Funcionário que deseja atualizar: ");
         int id = Integer.parseInt(sc.nextLine());
         var funcionario = funcionarioService.buscarFuncionarioPorId(id);
+        Usuario usuario;
         if(funcionario == null){
             System.out.println("Funcionário não encontrado!");
             return;
         }
-        System.out.println("Digite o novo cargo: ");
+        usuario = usuarioService.buscarUsuarioPorId(funcionario.getIdUsuario());
+        System.out.println("Digite o novo nome: (Vazio para não alterar) ");
+        String nome =  sc.nextLine();
+        if(!nome.isEmpty()) {
+            usuario.setNome(nome);
+        }
+        System.out.println("Digite o novo email: (Vazio para não alterar) ");
+        String email =  sc.nextLine();
+        if(!email.isEmpty()) {
+            usuario.setEmail(email);
+        }
+        System.out.println("Digite a nova senha: (Vazio para não alterar) ");
+
+        String senha =  sc.nextLine();
+        if(!senha.isEmpty()) {
+            usuario.setSenha(senha);
+        }
+        usuarioService.atualizarUsuario(usuario);
+
+        System.out.println("Digite o novo cargo: (Vazio para não alterar) ");
         String cargo =  sc.nextLine();
-        funcionario.setCargo(cargo);
+        if(!cargo.isEmpty()) {
+            funcionario.setCargo(cargo);
+        }
         funcionarioService.atualizarFuncionario(funcionario);
         System.out.println("Funcionário atualizado com sucesso!");
     }
@@ -50,7 +77,8 @@ public class FuncionarioController {
     public void listarFuncionarios(){
         var funcionarios = funcionarioService.listarFuncionarios();
         for(var func : funcionarios){
-            System.out.println(func.getId() + " - " + usuarioService.buscarUsuarioPorId(func.getIdUsuario()).getNome() + " - " + func.getCargo());
+            funcionarioToString(func);
+            System.out.println("-------------------");
         }
     }
 
@@ -64,14 +92,20 @@ public class FuncionarioController {
     public void buscarFuncionarioPorId(){
         System.out.println("Digite o ID do Funcionário que deseja buscar: ");
         int id = Integer.parseInt(sc.nextLine());
-        var funcionario = funcionarioService.buscarFuncionarioPorId(id);
+        Funcionario funcionario = funcionarioService.buscarFuncionarioPorId(id);
         if(funcionario == null){
             System.out.println("Funcionário não encontrado!");
             return;
         }
-        System.out.println(funcionario);
+        funcionarioToString(funcionario);
     }
 
-
+    public void funcionarioToString(Funcionario funcionario) {
+        Usuario usuario = usuarioService.buscarUsuarioPorId(funcionario.getIdUsuario());
+        System.out.println("ID: " + funcionario.getId());
+        System.out.println("Nome: " + usuario.getNome());
+        System.out.println("Cargo: " + funcionario.getCargo());
+        System.out.println("Telefone: " + funcionario.getTelefone());
+    }
 
 }

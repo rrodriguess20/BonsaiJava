@@ -4,7 +4,7 @@ import model.exceptions.InputFormatException;
 
 public class Funcionario extends Pessoa {
 
-    private String nome;
+    
     private String telefone;
     private int id;
     private String cargo;
@@ -42,23 +42,17 @@ public class Funcionario extends Pessoa {
     }
 
     //Overrides
-    public String getNome() {
-        return nome;
-    }
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
+    @Override
     public String getTelefone() {
         return telefone;
     }
-
+    @Override
     public void setTelefone(String telefone) {
         this.telefone = telefone;
     }
 
     //Getters e setters
-
+    
     public int getId() {
         return id;
     }

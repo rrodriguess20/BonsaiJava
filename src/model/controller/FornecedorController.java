@@ -74,7 +74,8 @@ public class FornecedorController {
         }
 
         for (Fornecedor f : fornecedores) {
-            System.out.println(f);
+            fornecedorToString(f);
+            System.out.println("-------------------");
         }
     }
 
@@ -98,7 +99,7 @@ public class FornecedorController {
             return;
         }
 
-        System.out.println(fornecedor);
+        fornecedorToString(fornecedor);
     }
 
     public void buscarFornecedorPorCnpj() {
@@ -127,7 +128,14 @@ public class FornecedorController {
         }
 
         for (Fornecedor f : fornecedores) {
-            System.out.println(f);
+            fornecedorToString(f);
         }
+    }
+
+    public void fornecedorToString(Fornecedor fornecedor){
+        System.out.println("ID: " + fornecedor.getId());
+        System.out.println("Nome: " + fornecedor.getNome());
+        System.out.println("CNPJ: " + fornecedor.getCnpj());
+        System.out.println("Telefone: " + fornecedor.getTelefone());
     }
 }

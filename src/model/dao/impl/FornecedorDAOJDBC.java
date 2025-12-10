@@ -28,7 +28,7 @@ public class FornecedorDAOJDBC implements model.dao.FornecedorDAO {
     }
 
     public void update(Fornecedor fornecedor) {
-        String sql = "UPDATE fornecedor SET nome = ?, cnpj = ?, telefone = ? WHERE id_fornecedor = ?";
+        String sql = "UPDATE fornecedor SET nome = ?, cnpj = ?, telefone = ? WHERE id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, fornecedor.getNome());
             stmt.setString(2, fornecedor.getCnpj());
@@ -42,7 +42,7 @@ public class FornecedorDAOJDBC implements model.dao.FornecedorDAO {
     }
 
     public void deleteById(int id) {
-        String sql = "DELETE FROM fornecedor WHERE id_fornecedor = ?";
+        String sql = "DELETE FROM fornecedor WHERE id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
             stmt.executeUpdate();
@@ -52,13 +52,13 @@ public class FornecedorDAOJDBC implements model.dao.FornecedorDAO {
     }
 
     public Fornecedor findById(int id) {
-        String sql = "SELECT * FROM fornecedor WHERE id_fornecedor = ?";
+        String sql = "SELECT * FROM fornecedor WHERE id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 Fornecedor fornecedor = new Fornecedor();
-                fornecedor.setId(rs.getInt("id_fornecedor"));
+                fornecedor.setId(rs.getInt("id"));
                 fornecedor.setNome(rs.getString("nome"));
                 fornecedor.setCnpj(rs.getString("cnpj"));
                 fornecedor.setTelefone(rs.getString("telefone"));
@@ -79,7 +79,7 @@ public class FornecedorDAOJDBC implements model.dao.FornecedorDAO {
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 Fornecedor fornecedor = new Fornecedor();
-                fornecedor.setId(rs.getInt("id_fornecedor"));
+                fornecedor.setId(rs.getInt("id"));
                 fornecedor.setNome(rs.getString("nome"));
                 fornecedor.setCnpj(rs.getString("cnpj"));
                 fornecedor.setTelefone(rs.getString("telefone"));
@@ -99,7 +99,7 @@ public class FornecedorDAOJDBC implements model.dao.FornecedorDAO {
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 Fornecedor fornecedor = new Fornecedor();
-                fornecedor.setId(rs.getInt("id_fornecedor"));
+                fornecedor.setId(rs.getInt("id"));
                 fornecedor.setNome(rs.getString("nome"));
                 fornecedor.setCnpj(rs.getString("cnpj"));
                 fornecedor.setTelefone(rs.getString("telefone"));
@@ -121,7 +121,7 @@ public class FornecedorDAOJDBC implements model.dao.FornecedorDAO {
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 Fornecedor fornecedor = new Fornecedor();
-                fornecedor.setId(rs.getInt("id_fornecedor"));
+                fornecedor.setId(rs.getInt("id"));
                 fornecedor.setNome(rs.getString("nome"));
                 fornecedor.setCnpj(rs.getString("cnpj"));
                 fornecedor.setTelefone(rs.getString("telefone"));

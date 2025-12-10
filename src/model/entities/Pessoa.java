@@ -12,7 +12,7 @@ public abstract class Pessoa {
         if(nome == null || nome.isBlank()) {
             throw new InputFormatException("Nome inválido");
         }
-        if(telefone == null || telefone.isBlank()|| telefone.length()!=11) {
+        if(telefone == null || telefone.isBlank()) {
             throw new InputFormatException("Telefone inválido");
         }
         this.nome = nome;
