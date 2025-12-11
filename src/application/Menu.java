@@ -6,6 +6,11 @@ import model.controller.CompraController;
 import model.controller.FornecedorController;
 import model.controller.FuncionarioController;
 import model.controller.VendaController;
+import model.controller.ProdutoController;
+import model.controller.ItemCompraController;
+import model.entities.ItemCompra;
+import model.service.ItemCompraService;
+import model.service.ProdutoService;
 
 
 /* Classe que implementa todos 
@@ -16,10 +21,13 @@ import model.controller.VendaController;
 public class Menu {
 
 	// Importa todos os controllers necessários
+
 	private final FornecedorController fornecedorController;
 	private final FuncionarioController funcionarioController;
 	private final CompraController compraController;
 	private final VendaController vendaController;
+	private final ItemCompraController itemCompraController;
+	private final ProdutoController produtoController;
 	private final Scanner sc = new Scanner(System.in);
 
 	// Construtor do Menu que recebe os controllers como parâmetros
@@ -27,11 +35,16 @@ public class Menu {
 	public Menu(FornecedorController fornecedorController,
 				FuncionarioController funcionarioController,
 				CompraController compraController,
-				VendaController vendaController) {
+				VendaController vendaController,
+				ItemCompraController itemCompraController,
+				ProdutoController produtoController
+			) {
 		this.fornecedorController = fornecedorController;
 		this.funcionarioController = funcionarioController;
 		this.compraController = compraController;
 		this.vendaController = vendaController;
+		this.itemCompraController = itemCompraController;
+		this.produtoController = produtoController;
 	}
 
 	private static final void clear() {
@@ -48,6 +61,7 @@ public class Menu {
 			System.out.println("2 - Gestão de Funcionários");
 			System.out.println("3 - Gestão de Compras");
 			System.out.println("4 - Gestão de Vendas");
+			System.out.println("5 - Gestao de Produtos");
 			System.out.println("0 - Sair");
 			int option = readInt("Escolha uma opção:");
 			switch (option) {
@@ -55,6 +69,7 @@ public class Menu {
 				case 2 -> funcionariosMenu();
 				case 3 -> comprasMenu();
 				case 4 -> vendasMenu();
+				case 5 -> produtosMenu();
 				case 0 -> running = false;
 				default -> {
 					System.out.println("Opção inválida!");
@@ -63,6 +78,33 @@ public class Menu {
 			}
 		}
 		System.out.println("Encerrando aplicação. Até logo!");
+	}
+
+	private void produtosMenu() {
+		boolean back = false;
+		while (!back) {
+			clear();
+			System.out.println("---------- Produtos ----------");
+			System.out.println("1 - Cadastrar");
+			System.out.println("2 - Atualizar");
+			System.out.println("3 - Listar todos");
+			System.out.println("4 - Buscar por ID");
+			System.out.println("5 - Deletar");
+			System.out.println("0 - Voltar");
+			int option = readInt("Selecione uma opção:");
+			switch (option) {
+				case 1 -> produtoController.cadastrarProduto();
+				case 2 -> produtoController.atualizarProduto();
+				case 3 -> produtoController.listarProdutos();
+				case 4 -> produtoController.buscarProdutoPorId();
+				case 5 -> produtoController.deletarProduto();
+				case 0 -> back = true;
+				default -> System.out.println("Opção inválida!");
+			}
+			if (!back) {
+				pause();
+			}
+		}
 	}
 
 	private void fornecedoresMenu() {
@@ -149,6 +191,7 @@ public class Menu {
 			}
 		}
 	}
+	
 
 	private void vendasMenu() {
 		boolean back = false;

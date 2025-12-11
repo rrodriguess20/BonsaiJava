@@ -13,7 +13,7 @@ public class ProdutoDAOJDBC implements model.dao.ProdutoDAO{
 
     Connection conn;
 
-    private ProdutoDAOJDBC(Connection conn){
+    public ProdutoDAOJDBC(Connection conn){
         this.conn = conn;
     }
     

@@ -6,22 +6,24 @@ import java.util.Scanner;
 import model.entities.Compra;
 import model.service.CompraService;
 
+import model.controller.ItemCompraController;
+
 public class CompraController {
 
     private  CompraService compraService;
+    private ItemCompraController itemCompraController;
 
     private final Scanner sc = new Scanner(System.in);
 
-    public CompraController(CompraService compraService) {
+    public CompraController(CompraService compraService, ItemCompraController itemCompraController) {
         this.compraService = compraService;
+        this.itemCompraController = itemCompraController;
     }
 
     public void cadastrarCompra(){
 
         System.out.println("Insira o id do fornecedor:");
         int id_fornecedor = sc.nextInt();
-        System.out.println("Insira o valor total da compra:");
-        double valor_total = sc.nextDouble();
 
         //Valores automáticos
         LocalDate data_compra = LocalDate.now();
@@ -29,10 +31,12 @@ public class CompraController {
         //Criar objeto Compra
         Compra compra = new Compra();
         compra.setIdFornecedor(id_fornecedor);
-        compra.setValorTotal(valor_total);
         compra.setDataCompra(data_compra);
 
         compraService.cadastrarCompra(compra);
+
+        itemCompraController.itensComprasMenu(compra.getId());
+
     }
 
     public void atualizarCompra(){

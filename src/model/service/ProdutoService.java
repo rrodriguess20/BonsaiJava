@@ -14,8 +14,8 @@ public class ProdutoService {
     }
 
     //Create
-    public void cadastrarProduto(String nome, String descricao, double preco, int estoque){
-        Produto produto = new Produto(nome, descricao, preco);
+    public void cadastrarProduto(String nome, String categoria, double preco){
+        Produto produto = new Produto(nome, categoria, preco);
         produtoDAO.insert(produto);
     }
     //Update

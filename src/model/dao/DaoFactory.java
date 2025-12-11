@@ -23,4 +23,12 @@ public class DaoFactory {
     public static VendaDAO createVendaDAO() {
         return new VendaDAOJDBC(DB.getConnection());
     }
+
+    public static ItemCompraDAO createItemCompraDAO() {
+        return new ItemCompraDAOJDBC(DB.getConnection());
+    }
+
+    public static ProdutoDAO createProdutoDAO() {
+        return new ProdutoDAOJDBC(DB.getConnection());
+    }
 }
