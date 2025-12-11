@@ -48,12 +48,13 @@ public class Menu {
 	}
 
 	private static final void clear() {
-        System.out.print("\033[H\033[2J");
+        System.out.print("\033[H\033[2J\n\n\n");
+		System.out.println("");
         System.out.flush();
     }
 
 	public void start() {
-		boolean running = true; // Se rodando o menu principal
+		boolean running = true; // Se rodando
 		while (running) {
 			clear(); // Limpa a tela
 			System.out.println("================ Supermercado Bonsai  ================");

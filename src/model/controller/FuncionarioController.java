@@ -22,33 +22,63 @@ public class FuncionarioController {
     }
 
     public void cadastrarNovoFuncionario(){
-        
-        System.out.println("Digite o nome do novo Funcionário: ");
-        String nome = sc.nextLine();
-        System.out.println("Digite o cargo: ");
-        String cargo = sc.nextLine();
-        System.out.println("Digite o email: ");
-        String email = sc.nextLine();
-        System.out.println("Digite uma senha: ");
-        String senha = sc.nextLine();
+        try{
+            System.out.println("Digite o nome do novo Funcionário: ");
+            String nome = sc.nextLine();
+            System.out.println("Digite o cargo: ");
+            String cargo = sc.nextLine();
+            System.out.println("Digite o email: ");
+            String email = sc.nextLine();
+            System.out.println("Digite uma senha: ");
+            String senha = sc.nextLine();
 
-        funcionarioService.cadastrarFuncionario(nome, senha, email, cargo);
-
+            funcionarioService.cadastrarFuncionario(nome, senha, email, cargo);
+            System.out.println("Funcionário cadastrado com sucesso!");
+        }catch(DatabaseException e){
+            System.out.println("Erro ao cadastrar funcionário!");
+            System.out.println("Detalhes: " + e.getMessage());
+        }catch(Exception e){
+            System.out.println("Erro inesperado ao cadastrar funcionário!");
+            System.out.println("Detalhes: " + e.getMessage());
+        }
     }
 
     public void atualizarFuncionario(){
-
         listarFuncionarios();
 
         System.out.println("Digite o ID do Funcionário que deseja atualizar: ");
-        int id = Integer.parseInt(sc.nextLine());
-        var funcionario = funcionarioService.buscarFuncionarioPorId(id);
+        final int id;
+        try{
+            id = Integer.parseInt(sc.nextLine());
+        }catch(NumberFormatException e){
+            System.out.println("ID inválido.");
+            return;
+        }
+
+        Funcionario funcionario;
         Usuario usuario;
-        if(funcionario == null){
+        try{
+            funcionario = funcionarioService.buscarFuncionarioPorId(id);
+            usuario = usuarioService.buscarUsuarioPorId(funcionario.getIdUsuario());
+        }catch(EntityNotFoundException e){
+            System.out.println("Funcionário ou usuário associado não encontrado!");
+            System.out.println("Detalhes: " + e.getMessage());
+            return;
+        }catch(DatabaseException e){
+            System.out.println("Erro ao buscar dados do funcionário!");
+            System.out.println("Detalhes: " + e.getMessage());
+            return;
+        }catch(Exception e){
+            System.out.println("Ocorreu um erro inesperado ao buscar os dados.");
+            System.out.println("Detalhes: " + e.getMessage());
+            return;
+        }
+
+        if(funcionario == null || usuario == null){
             System.out.println("Funcionário não encontrado!");
             return;
         }
-        usuario = usuarioService.buscarUsuarioPorId(funcionario.getIdUsuario());
+
         System.out.println("Digite o novo nome: (Vazio para não alterar) ");
         String nome =  sc.nextLine();
         if(!nome.isEmpty()) {
@@ -60,64 +90,117 @@ public class FuncionarioController {
             usuario.setEmail(email);
         }
         System.out.println("Digite a nova senha: (Vazio para não alterar) ");
-
         String senha =  sc.nextLine();
         if(!senha.isEmpty()) {
             usuario.setSenha(senha);
         }
-        usuarioService.atualizarUsuario(usuario);
-
         System.out.println("Digite o novo cargo: (Vazio para não alterar) ");
         String cargo =  sc.nextLine();
         if(!cargo.isEmpty()) {
             funcionario.setCargo(cargo);
         }
-        funcionarioService.atualizarFuncionario(funcionario);
-        System.out.println("Funcionário atualizado com sucesso!");
+
+        try{
+            usuarioService.atualizarUsuario(usuario);
+            funcionarioService.atualizarFuncionario(funcionario);
+            System.out.println("Funcionário atualizado com sucesso!");
+        }catch(EntityNotFoundException e){
+            System.out.println("Funcionário ou usuário não encontrado durante a atualização!");
+            System.out.println("Detalhes: " + e.getMessage());
+        }catch(DatabaseException e){
+            System.out.println("Erro ao atualizar funcionário! ");
+            System.out.println("Detalhes: " + e.getMessage());
+        }catch(Exception e){
+            System.out.println("Ocorreu um erro inesperado ao atualizar o funcionário.");
+            System.out.println("Detalhes: " + e.getMessage());
+        }
     }
 
     public void listarFuncionarios(){
-        var funcionarios = funcionarioService.listarFuncionarios();
-        for(var func : funcionarios){
-            funcionarioToString(func);
-            System.out.println("-------------------");
+        try{
+            var funcionarios = funcionarioService.listarFuncionarios();
+            if(funcionarios.isEmpty()){
+                System.out.println("Nenhum funcionário cadastrado.");
+                return;
+            }
+            for(var func : funcionarios){
+                funcionarioToString(func);
+                System.out.println("-------------------");
+            }
+        }catch(DatabaseException e){
+            System.out.println("Erro ao listar funcionários!");
+            System.out.println("Detalhes: " + e.getMessage());
+        }catch(Exception e){
+            System.out.println("Erro inesperado ao listar funcionários!");
+            System.out.println("Detalhes: " + e.getMessage());
         }
     }
 
     public void deletarFuncionario(){
         System.out.println("Digite o ID do Funcionário que deseja deletar: ");
-        int id = Integer.parseInt(sc.nextLine());
-        funcionarioService.deletarFuncionario(id);
-        System.out.println("Funcionário deletado com sucesso!");
+        final int id;
+        try{
+            id = Integer.parseInt(sc.nextLine());
+        }catch(NumberFormatException e){
+            System.out.println("ID inválido.");
+            return;
+        }
+        try{
+            funcionarioService.deletarFuncionario(id);
+            System.out.println("Funcionário deletado com sucesso!");
+        }catch(EntityNotFoundException e){
+            System.out.println("Funcionário não encontrado!");
+            System.out.println("Detalhes: " + e.getMessage());
+        }catch(DatabaseException e){
+            System.out.println("Erro ao deletar funcionário! ");
+            System.out.println("Detalhes: " + e.getMessage());
+        }catch(Exception e){
+            System.out.println("Erro inesperado ao deletar funcionário!");
+            System.out.println("Detalhes: " + e.getMessage());
+        }
     }
 
     public void buscarFuncionarioPorId(){
         System.out.println("Digite o ID do Funcionário que deseja buscar: ");
-        int id = Integer.parseInt(sc.nextLine());
+        final int id;
+        try{
+            id = Integer.parseInt(sc.nextLine());
+        }catch(NumberFormatException e){
+            System.out.println("ID inválido.");
+            return;
+        }
         try{
             Funcionario funcionario = funcionarioService.buscarFuncionarioPorId(id);
             funcionarioToString(funcionario);
         }catch(EntityNotFoundException e){
             System.out.println("Funcionário não encontrado!");
             System.out.println("Detalhes: " + e.getMessage());
-            return;
         }catch(DatabaseException e){
             System.out.println("Erro ao buscar funcionário! ");
             System.out.println("Detalhes: " + e.getMessage());
-            return;
         }catch(Exception e){
             System.out.println("Ocorreu um erro inesperado ao buscar o funcionário.");
             System.out.println("Detalhes: " + e.getMessage());
-            return;
         }
     }
 
     public void funcionarioToString(Funcionario funcionario) {
-        Usuario usuario = usuarioService.buscarUsuarioPorId(funcionario.getIdUsuario());
-        System.out.println("ID: " + funcionario.getId());
-        System.out.println("Nome: " + usuario.getNome());
-        System.out.println("Cargo: " + funcionario.getCargo());
-        System.out.println("Telefone: " + funcionario.getTelefone());
+        try{
+            Usuario usuario = usuarioService.buscarUsuarioPorId(funcionario.getIdUsuario());
+            System.out.println("ID: " + funcionario.getId());
+            System.out.println("Nome: " + usuario.getNome());
+            System.out.println("Cargo: " + funcionario.getCargo());
+            System.out.println("Telefone: " + funcionario.getTelefone());
+        }catch(EntityNotFoundException e){
+            System.out.println("Usuário associado ao funcionário não encontrado.");
+            System.out.println("Detalhes: " + e.getMessage());
+        }catch(DatabaseException e){
+            System.out.println("Erro ao buscar usuário associado ao funcionário.");
+            System.out.println("Detalhes: " + e.getMessage());
+        }catch(Exception e){
+            System.out.println("Erro inesperado ao exibir dados do funcionário.");
+            System.out.println("Detalhes: " + e.getMessage());
+        }
     }
 
 }
