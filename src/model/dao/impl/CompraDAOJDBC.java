@@ -34,7 +34,7 @@ public class CompraDAOJDBC implements model.dao.CompraDAO {
 
     @Override
     public void update(model.entities.Compra compra) {
-        String sql = "UPDATE compra SET id_fornecedor = ?, data_compra = ?, valor_total = ? WHERE id_compra = ?";
+        String sql = "UPDATE compra SET id_fornecedor = ?, data_compra = ?, valor_total = ? WHERE id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, compra.getIdFornecedor());
             stmt.setDate(2, java.sql.Date.valueOf(compra.getDataCompra()));
@@ -49,7 +49,7 @@ public class CompraDAOJDBC implements model.dao.CompraDAO {
     }
     @Override
     public void deleteById(int id) {
-        String sql = "DELETE FROM compra WHERE id_compra = ?";
+        String sql = "DELETE FROM compra WHERE id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
             if(stmt.executeUpdate() == 0){
@@ -62,13 +62,13 @@ public class CompraDAOJDBC implements model.dao.CompraDAO {
 
     @Override
     public model.entities.Compra findById(int id) {
-        String sql = "SELECT * FROM compra WHERE id_compra = ?";
+        String sql = "SELECT * FROM compra WHERE id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
             try(ResultSet rs = stmt.executeQuery()){
             if (rs.next()) {
                 model.entities.Compra compra = new model.entities.Compra();
-                compra.setId(rs.getInt("id_compra"));
+                compra.setId(rs.getInt("id"));
                 compra.setIdFornecedor(rs.getInt("id_fornecedor"));
                 compra.setDataCompra(rs.getDate("data_compra").toLocalDate());
                 compra.setValorTotal(rs.getDouble("valor_total"));
@@ -89,7 +89,7 @@ public class CompraDAOJDBC implements model.dao.CompraDAO {
             try(ResultSet rs = stmt.executeQuery()){
                 while (rs.next()) {
                     Compra compra = new Compra();
-                    compra.setId(rs.getInt("id_compra"));
+                    compra.setId(rs.getInt("id"));
                     compra.setIdFornecedor(rs.getInt("id_fornecedor"));
                     compra.setDataCompra(rs.getDate("data_compra").toLocalDate());
                     compra.setValorTotal(rs.getDouble("valor_total"));
@@ -111,7 +111,7 @@ public class CompraDAOJDBC implements model.dao.CompraDAO {
              ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
                 Compra compra = new Compra();
-                compra.setId(rs.getInt("id_compra"));
+                compra.setId(rs.getInt("id"));
                 compra.setIdFornecedor(rs.getInt("id_fornecedor"));
                 compra.setDataCompra(rs.getDate("data_compra").toLocalDate());
                 compra.setValorTotal(rs.getDouble("valor_total"));

@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.util.Scanner;
 
 import model.entities.Compra;
+import model.exceptions.DatabaseException;
+import model.exceptions.EntityNotFoundException;
 import model.service.CompraService;
 
 
@@ -64,19 +66,72 @@ public class CompraController {
 
     public void deletarCompra(){
         System.out.println("Digite o id da compra que deseja deletar:");
-        int id = Integer.parseInt(sc.nextLine());
-        compraService.deletarCompra(id);
+        int id;
+        try{
+            id = Integer.parseInt(sc.nextLine());
+        }catch(NumberFormatException e){
+            System.out.println("ID inválido.");
+            return;
+        }
+        final Compra compra;
+        
+        compra = compraService.buscarCompraPorId(id);
+        
+        try{
+            compraService.deletarCompra(compra.getId());
+        }catch (EntityNotFoundException e){
+            System.out.println("Compra não encontrada.");
+            System.out.println("Detalhes: " + e.getMessage());
+            return;
+        }catch(DatabaseException e){
+            System.out.println("Erro ao buscar compra: " + e.getMessage());
+            return;
+        }
+        catch(Exception e){
+            System.out.println("Erro inesperado: " + e.getMessage());
+            return;
+        }
         System.out.println("Compra deletada com sucesso!");
     }
 
     public void buscarCompraPorId(){
         System.out.println("Digite o id da compra que deseja buscar:");
-        int id = Integer.parseInt(sc.nextLine());
-        var compra = compraService.buscarCompraPorId(id);
-        if(compra == null){
-            System.out.println("Compra não encontrada.");
+        int id;
+        Compra compra;
+        try{
+        id = Integer.parseInt(sc.nextLine());
+        }catch(NumberFormatException e){
+            System.out.println("ID inválido.");
             return;
         }
-        System.out.println(compra);
+        try{
+            compra = compraService.buscarCompraPorId(id);
+        }catch(DatabaseException e){
+            System.out.println("Erro ao buscar compra: " + e.getMessage());
+            return;
+        }catch(EntityNotFoundException e){
+            System.out.println("Compra não encontrada: " + e.getMessage());
+            return;
+        }
+        catch(Exception e){
+            System.out.println("Erro inesperado: " + e.getMessage());
+            return;
+        }
+        compraToString(compra);
+    }
+
+    public void listarTodasCompras(){
+        var compras = compraService.listarTodasCompras();
+        for(var compra : compras){
+            compraToString(compra);
+            System.out.println("-------------------");
+        }
+    }
+
+    public void compraToString(Compra compra){
+        System.out.println("ID: " + compra.getId());
+        System.out.println("ID Fornecedor: " + compra.getIdFornecedor());
+        System.out.println("Data da Compra: " + compra.getDataCompra());
+        System.out.println("Valor Total: " + compra.getValorTotal());
     }
 }

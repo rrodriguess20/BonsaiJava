@@ -181,7 +181,7 @@ public class Menu {
 			switch (option) {
 				case 1 -> compraController.cadastrarCompra();
 				case 2 -> compraController.atualizarCompra();
-				case 3 -> compraController.listarCompra();
+				case 3 -> compraController.listarTodasCompras();
 				case 4 -> compraController.buscarCompraPorId();
 				case 5 -> compraController.deletarCompra();
 				case 0 -> back = true;

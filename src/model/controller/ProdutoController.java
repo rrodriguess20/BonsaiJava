@@ -112,15 +112,19 @@ public class ProdutoController {
             System.out.println("Produto deletado com sucesso!");
         }catch(NumberFormatException e){
             System.out.println("ID inválido. Operação cancelada.");
+            return;
         }catch(EntityNotFoundException e){
             System.out.println("Produto não encontrado.");
             System.out.println("Detalhes: " + e.getMessage());
+            return;
         }catch(DatabaseException e){
             System.out.println("Erro ao deletar produto!");
             System.out.println("Detalhes: " + e.getMessage());
+            return;
         }catch(Exception e){
             System.out.println("Erro inesperado ao deletar produto!");
             System.out.println("Detalhes: " + e.getMessage());
+            return;
         }
     }
 
