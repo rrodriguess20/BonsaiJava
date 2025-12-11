@@ -2,6 +2,8 @@ package model.dao.impl;
 
 import model.dao.MovimentacaoEstoqueDAO;
 import model.entities.MovimentacaoEstoque;
+import model.exceptions.DatabaseException;
+import model.exceptions.EntityNotFoundException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,7 +16,7 @@ import java.util.List;
 
 public class MovimentacaoEstoqueDAOJDBC implements MovimentacaoEstoqueDAO {
     
-    private Connection conn;
+    private final Connection conn;
 
     public MovimentacaoEstoqueDAOJDBC(Connection conn) {
         this.conn = conn;
@@ -30,7 +32,7 @@ public class MovimentacaoEstoqueDAOJDBC implements MovimentacaoEstoqueDAO {
             stmt.setTimestamp(4, toTimestamp(movimentacao.getDataMovimentacao()));
             stmt.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DatabaseException("Erro ao inserir movimentação de estoque", e);
         }
     }
 
@@ -50,7 +52,7 @@ public class MovimentacaoEstoqueDAOJDBC implements MovimentacaoEstoqueDAO {
                 movimentacoes.add(movimentacao);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DatabaseException("Erro ao listar movimentações de estoque", e);
         }
         return movimentacoes;
     }
@@ -60,7 +62,7 @@ public class MovimentacaoEstoqueDAOJDBC implements MovimentacaoEstoqueDAO {
         String sql = "SELECT * FROM movimentacao_estoque WHERE id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
-            ResultSet rs = stmt.executeQuery();
+            try(ResultSet rs = stmt.executeQuery()){
             if (rs.next()) {
                 MovimentacaoEstoque movimentacao = new MovimentacaoEstoque();
                 movimentacao.setId(rs.getInt("id"));
@@ -70,11 +72,11 @@ public class MovimentacaoEstoqueDAOJDBC implements MovimentacaoEstoqueDAO {
                 movimentacao.setDataMovimentacao(toLocalDateTime(rs.getTimestamp("data")));
                 return movimentacao;
             }
+            }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DatabaseException("Erro ao buscar movimentação de estoque por ID", e);
         }
-
-        return null;
+        throw new EntityNotFoundException("MovimentacaoEstoque", id);
     }
 
     @Override
@@ -86,9 +88,11 @@ public class MovimentacaoEstoqueDAOJDBC implements MovimentacaoEstoqueDAO {
             stmt.setString(3, movimentacao.getTipoMovimentacao());
             stmt.setTimestamp(4, toTimestamp(movimentacao.getDataMovimentacao()));
             stmt.setInt(5, movimentacao.getId());
-            stmt.executeUpdate();
+            if(stmt.executeUpdate() == 0){
+                throw new EntityNotFoundException("Movimentação de estoque não encontrada para atualização: " + movimentacao.getId());
+            }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DatabaseException("Erro ao atualizar movimentação de estoque", e);
 
         }
     }
@@ -98,9 +102,11 @@ public class MovimentacaoEstoqueDAOJDBC implements MovimentacaoEstoqueDAO {
         String sql = "DELETE FROM movimentacao_estoque WHERE id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
-            stmt.executeUpdate();
+            if(stmt.executeUpdate() == 0){
+                throw new EntityNotFoundException("Movimentação de estoque não encontrada para exclusão: " + id);
+            }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DatabaseException("Erro ao deletar movimentação de estoque", e);
         }
     }
 

@@ -4,13 +4,16 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import model.entities.Fornecedor;
+import model.exceptions.DatabaseException;
+import model.exceptions.EntityNotFoundException;
 
 public class FornecedorDAOJDBC implements model.dao.FornecedorDAO {
 
-    Connection conn;
+    private final Connection conn;
     public FornecedorDAOJDBC(Connection conn) {
         this.conn = conn;
     }
@@ -23,7 +26,7 @@ public class FornecedorDAOJDBC implements model.dao.FornecedorDAO {
             stmt.setString(3, fornecedor.getTelefone());
             stmt.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DatabaseException("Erro ao inserir fornecedor", e);
         }    
     }
 
@@ -34,9 +37,11 @@ public class FornecedorDAOJDBC implements model.dao.FornecedorDAO {
             stmt.setString(2, fornecedor.getCnpj());
             stmt.setString(3, fornecedor.getTelefone());
             stmt.setInt(4, fornecedor.getId());
-            stmt.executeUpdate();
+            if(stmt.executeUpdate() == 0){
+                throw new EntityNotFoundException("Fornecedor não encontrado para atualização: " + fornecedor.getId());
+            }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DatabaseException("Erro ao atualizar fornecedor", e);
         }
 
     }
@@ -45,9 +50,11 @@ public class FornecedorDAOJDBC implements model.dao.FornecedorDAO {
         String sql = "DELETE FROM fornecedor WHERE id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
-            stmt.executeUpdate();
+            if(stmt.executeUpdate() == 0){
+                throw new EntityNotFoundException("Fornecedor não encontrado para exclusão: " + id);
+            }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DatabaseException("Erro ao deletar fornecedor", e);
         }
     }
 
@@ -55,28 +62,28 @@ public class FornecedorDAOJDBC implements model.dao.FornecedorDAO {
         String sql = "SELECT * FROM fornecedor WHERE id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                Fornecedor fornecedor = new Fornecedor();
-                fornecedor.setId(rs.getInt("id"));
-                fornecedor.setNome(rs.getString("nome"));
-                fornecedor.setCnpj(rs.getString("cnpj"));
-                fornecedor.setTelefone(rs.getString("telefone"));
-                return fornecedor;
+            try(ResultSet rs = stmt.executeQuery()){
+                if (rs.next()) {
+                    Fornecedor fornecedor = new Fornecedor();
+                    fornecedor.setId(rs.getInt("id"));
+                    fornecedor.setNome(rs.getString("nome"));
+                    fornecedor.setCnpj(rs.getString("cnpj"));
+                    fornecedor.setTelefone(rs.getString("telefone"));
+                    return fornecedor;
+                }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
-            
+            throw new DatabaseException("Erro ao buscar fornecedor por ID", e);
         }
-        return null;
+        throw new EntityNotFoundException("Fornecedor", id);
     }
 
 
     public List<Fornecedor> findAll() {
-        List<Fornecedor> fornecedores = new java.util.ArrayList<>();
+        List<Fornecedor> fornecedores = new ArrayList<>();
         String sql = "SELECT * FROM fornecedor";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            ResultSet rs = stmt.executeQuery();
+        try (PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
                 Fornecedor fornecedor = new Fornecedor();
                 fornecedor.setId(rs.getInt("id"));
@@ -87,38 +94,37 @@ public class FornecedorDAOJDBC implements model.dao.FornecedorDAO {
             }
             return fornecedores;
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DatabaseException("Erro ao listar fornecedores", e);
         }
-        return null;
     }
 
     public Fornecedor findByCnpj(String cnpj) {
         String sql = "SELECT * FROM fornecedor WHERE cnpj = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, cnpj);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                Fornecedor fornecedor = new Fornecedor();
-                fornecedor.setId(rs.getInt("id"));
-                fornecedor.setNome(rs.getString("nome"));
-                fornecedor.setCnpj(rs.getString("cnpj"));
-                fornecedor.setTelefone(rs.getString("telefone"));
-                return fornecedor;
+            try(ResultSet rs = stmt.executeQuery()){
+                if (rs.next()) {
+                    Fornecedor fornecedor = new Fornecedor();
+                    fornecedor.setId(rs.getInt("id"));
+                    fornecedor.setNome(rs.getString("nome"));
+                    fornecedor.setCnpj(rs.getString("cnpj"));
+                    fornecedor.setTelefone(rs.getString("telefone"));
+                    return fornecedor;
+                }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
-    }
+            throw new DatabaseException("Erro ao buscar fornecedor por CNPJ", e);
+        }
 
-    
-        return null;
+        throw new EntityNotFoundException("Fornecedor com CNPJ não encontrado: " + cnpj);
     }
 
     public List<Fornecedor> findByName(String nome) {
-        List<Fornecedor> fornecedores = new java.util.ArrayList<>();
+        List<Fornecedor> fornecedores = new ArrayList<>();
         String sql = "SELECT * FROM fornecedor WHERE nome LIKE ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, "%" + nome + "%");
-            ResultSet rs = stmt.executeQuery();
+            try(ResultSet rs = stmt.executeQuery()){
             while (rs.next()) {
                 Fornecedor fornecedor = new Fornecedor();
                 fornecedor.setId(rs.getInt("id"));
@@ -127,13 +133,10 @@ public class FornecedorDAOJDBC implements model.dao.FornecedorDAO {
                 fornecedor.setTelefone(rs.getString("telefone"));
                 fornecedores.add(fornecedor);
             }
-            return fornecedores;
+            }
         } catch (SQLException e) {
-            e.printStackTrace();
-
-
-
+            throw new DatabaseException("Erro ao buscar fornecedores por nome", e);
         }
-        return null;
+        return fornecedores;
     }
 }

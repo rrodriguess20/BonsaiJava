@@ -9,9 +9,12 @@ import java.util.List;
 
 import model.entities.Produto;
 
+import model.exceptions.DatabaseException;
+import model.exceptions.EntityNotFoundException;
+
 public class ProdutoDAOJDBC implements model.dao.ProdutoDAO{
 
-    Connection conn;
+    private final Connection conn;
 
     public ProdutoDAOJDBC(Connection conn){
         this.conn = conn;
@@ -26,7 +29,7 @@ public class ProdutoDAOJDBC implements model.dao.ProdutoDAO{
             stmt.setString(3, produto.getCategoria());
             stmt.executeUpdate();
         }catch(SQLException e){
-            throw new RuntimeException("Erro ao cadastrar produto: " + e);
+            throw new DatabaseException("Erro ao inserir produto", e);
         }
     }
 
@@ -36,10 +39,12 @@ public class ProdutoDAOJDBC implements model.dao.ProdutoDAO{
             stmt.setString(1, produto.getNome());
             stmt.setDouble(2, produto.getPreco());
             stmt.setString(3, produto.getCategoria());
-            stmt.setInt(5, produto.getId());
-            stmt.executeUpdate();
+            stmt.setInt(4, produto.getId());
+            if(stmt.executeUpdate() == 0){
+                throw new EntityNotFoundException("Produto não encontrado para atualização: " + produto.getId());
+            }
         }catch(SQLException e){
-            throw new RuntimeException("Erro ao atualizar produto: " + e);
+            throw new DatabaseException("Erro ao atualizar produto", e);
         }
     }
 
@@ -47,9 +52,11 @@ public class ProdutoDAOJDBC implements model.dao.ProdutoDAO{
         String sql = "DELETE FROM produto WHERE id = ?";
         try(PreparedStatement stmt = conn.prepareStatement(sql)){
             stmt.setInt(1, id);
-            stmt.executeUpdate();
+            if(stmt.executeUpdate() == 0){
+                throw new EntityNotFoundException("Produto não encontrado para exclusão: " + id);
+            }
         }catch(SQLException e){
-            throw new RuntimeException("Erro ao deletar produto: " + e);
+            throw new DatabaseException("Erro ao deletar produto", e);
         }
     }
 
@@ -58,26 +65,27 @@ public class ProdutoDAOJDBC implements model.dao.ProdutoDAO{
         String sql = "SELECT  * FROM produto WHERE id = ?";
         try(PreparedStatement stmt = conn.prepareStatement(sql)){
             stmt.setInt(1, id);
-            ResultSet rs = stmt.executeQuery();
-            if(rs.next()){
-                Produto produto = new Produto();
-                produto.setId(rs.getInt("id"));
-                produto.setNome(rs.getString("nome"));
-                produto.setPreco(rs.getDouble("preco"));
-                produto.setCategoria(rs.getString("categoria"));
-                return produto; 
+            try(ResultSet rs = stmt.executeQuery()){
+                if(rs.next()){
+                    Produto produto = new Produto();
+                    produto.setId(rs.getInt("id"));
+                    produto.setNome(rs.getString("nome"));
+                    produto.setPreco(rs.getDouble("preco"));
+                    produto.setCategoria(rs.getString("categoria"));
+                    return produto; 
+                }
             }
+            throw new EntityNotFoundException("Produto não encontrado: " + id);
         }catch(SQLException e){
-            throw new RuntimeException("Erro ao buscar produto: " + e);
+            throw new DatabaseException("Erro ao buscar produto", e);
         }
-        return null;
     }
 
     public List<Produto> findAll(){
         List<Produto> produtos = new ArrayList<>();
         String sql = "SELECT * FROM produto";
-        try(PreparedStatement stmt = conn.prepareStatement(sql)){
-            ResultSet rs = stmt.executeQuery();
+        try(PreparedStatement stmt = conn.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery()){
             while(rs.next()){
                 Produto produto = new Produto();
                 produto.setId(rs.getInt("id"));
@@ -87,7 +95,7 @@ public class ProdutoDAOJDBC implements model.dao.ProdutoDAO{
                 produtos.add(produto);
             }
         }catch(SQLException e){
-            throw new RuntimeException("Erro ao listar produtos: " + e);
+            throw new DatabaseException("Erro ao listar produtos", e);
         }
         return produtos;
     }

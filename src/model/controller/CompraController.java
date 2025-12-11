@@ -6,7 +6,6 @@ import java.util.Scanner;
 import model.entities.Compra;
 import model.service.CompraService;
 
-import model.controller.ItemCompraController;
 
 public class CompraController {
 

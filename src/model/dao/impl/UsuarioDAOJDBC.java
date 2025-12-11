@@ -10,6 +10,9 @@ import java.util.List;
 import model.dao.UsuarioDAO;
 import model.entities.Usuario;
 
+import model.exceptions.DatabaseException;
+import model.exceptions.EntityNotFoundException; 
+
 public class UsuarioDAOJDBC implements UsuarioDAO {
 
     private final Connection conn;
@@ -33,7 +36,7 @@ public class UsuarioDAOJDBC implements UsuarioDAO {
                 }
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao inserir usuário", e);
+            throw new DatabaseException("Erro ao inserir usuário", e);
         }
     }
 
@@ -45,9 +48,11 @@ public class UsuarioDAOJDBC implements UsuarioDAO {
             stmt.setString(2, usuario.getEmail());
             stmt.setString(3, usuario.getSenha());
             stmt.setInt(4, usuario.getId());
-            stmt.executeUpdate();
+            if(stmt.executeUpdate() == 0){
+                throw new EntityNotFoundException("Usuário não encontrado para atualização: " + usuario.getId());
+            }
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao atualizar usuário", e);
+            throw new DatabaseException("Erro ao atualizar usuário", e);
         }
     }
 
@@ -56,9 +61,11 @@ public class UsuarioDAOJDBC implements UsuarioDAO {
         String sql = "DELETE FROM usuario WHERE id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
-            stmt.executeUpdate();
+            if(stmt.executeUpdate() == 0){
+                throw new EntityNotFoundException("Usuário não encontrado para exclusão: " + id);
+            }
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao remover usuário", e);
+            throw new DatabaseException("Erro ao deletar usuário", e);
         }
     }
 
@@ -72,7 +79,7 @@ public class UsuarioDAOJDBC implements UsuarioDAO {
                 usuarios.add(instantiateUsuario(rs));
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao listar usuários", e);
+            throw new DatabaseException("Erro ao buscar todos os usuários", e);
         }
         return usuarios;
     }
@@ -88,9 +95,9 @@ public class UsuarioDAOJDBC implements UsuarioDAO {
                 }
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao buscar usuário por id", e);
+            throw new DatabaseException("Erro ao buscar usuário por ID", e);
         }
-        return null;
+        throw new EntityNotFoundException("Usuario", id);
     }
 
     @Override
@@ -105,7 +112,7 @@ public class UsuarioDAOJDBC implements UsuarioDAO {
                 }
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao autenticar usuário", e);
+            throw new DatabaseException("Erro ao autenticar usuário", e);
         }
         return null;
     }

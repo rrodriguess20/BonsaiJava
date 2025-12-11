@@ -6,11 +6,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
 import model.entities.Compra;
+import model.exceptions.DatabaseException;
+import model.exceptions.EntityNotFoundException;
 
 public class CompraDAOJDBC implements model.dao.CompraDAO {
 
-    private Connection conn;
+    private final Connection conn;
 
     public CompraDAOJDBC(Connection conn) {
         this.conn = conn;
@@ -25,7 +28,7 @@ public class CompraDAOJDBC implements model.dao.CompraDAO {
             stmt.setDouble(3, compra.getValorTotal());
             stmt.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DatabaseException("Erro ao inserir compra", e);
         }
     }
 
@@ -37,19 +40,23 @@ public class CompraDAOJDBC implements model.dao.CompraDAO {
             stmt.setDate(2, java.sql.Date.valueOf(compra.getDataCompra()));
             stmt.setDouble(3, compra.getValorTotal());
             stmt.setInt(4, compra.getId());
-            stmt.executeUpdate();
+            if(stmt.executeUpdate() == 0){
+                throw new EntityNotFoundException("Compra não encontrada para atualização: " + compra.getId());
+            }
         } catch (SQLException e) {
-            e.printStackTrace();
-    }
+            throw new DatabaseException("Erro ao atualizar compra", e);
+        }
     }
     @Override
     public void deleteById(int id) {
         String sql = "DELETE FROM compra WHERE id_compra = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
-            stmt.executeUpdate();
+            if(stmt.executeUpdate() == 0){
+                throw new EntityNotFoundException("Compra não encontrada para exclusão: " + id);
+            }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DatabaseException("Erro ao deletar compra", e);
         }
     }
 
@@ -58,7 +65,7 @@ public class CompraDAOJDBC implements model.dao.CompraDAO {
         String sql = "SELECT * FROM compra WHERE id_compra = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
-            ResultSet rs = stmt.executeQuery();
+            try(ResultSet rs = stmt.executeQuery()){
             if (rs.next()) {
                 model.entities.Compra compra = new model.entities.Compra();
                 compra.setId(rs.getInt("id_compra"));
@@ -67,40 +74,41 @@ public class CompraDAOJDBC implements model.dao.CompraDAO {
                 compra.setValorTotal(rs.getDouble("valor_total"));
                 return compra;
             }
+            }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DatabaseException("Erro ao buscar compra por ID", e);
         }
-        return null;
+        throw new EntityNotFoundException("Compra", id);
     }
     @Override
     public List<Compra> findByFornecedorId(int id_fornecedor) {
         String sql = "SELECT * FROM compra WHERE id_fornecedor = ?";
+        List<Compra> compras = new ArrayList<>();
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id_fornecedor);
-            ResultSet rs = stmt.executeQuery();
-            List<Compra> compras = new ArrayList<>();
-            while (rs.next()) {
-                Compra compra = new Compra();
-                compra.setId(rs.getInt("id_compra"));
-                compra.setIdFornecedor(rs.getInt("id_fornecedor"));
-                compra.setDataCompra(rs.getDate("data_compra").toLocalDate());
-                compra.setValorTotal(rs.getDouble("valor_total"));
-                compras.add(compra);
+            try(ResultSet rs = stmt.executeQuery()){
+                while (rs.next()) {
+                    Compra compra = new Compra();
+                    compra.setId(rs.getInt("id_compra"));
+                    compra.setIdFornecedor(rs.getInt("id_fornecedor"));
+                    compra.setDataCompra(rs.getDate("data_compra").toLocalDate());
+                    compra.setValorTotal(rs.getDouble("valor_total"));
+                    compras.add(compra);
+                }
             }
-            return compras;
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DatabaseException("Erro ao buscar compras por fornecedor", e);
         }
-        return null;
+        return compras;
     }
   
 
     @Override
-    public java.util.List<model.entities.Compra> findAll() {
+    public List<Compra> findAll() {
         String sql = "SELECT * FROM compra";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            ResultSet rs = stmt.executeQuery();
-            List<Compra> compras = new ArrayList<>();
+        List<Compra> compras = new ArrayList<>();
+        try (PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
                 Compra compra = new Compra();
                 compra.setId(rs.getInt("id_compra"));
@@ -109,11 +117,10 @@ public class CompraDAOJDBC implements model.dao.CompraDAO {
                 compra.setValorTotal(rs.getDouble("valor_total"));
                 compras.add(compra);
             }
-            return compras;
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DatabaseException("Erro ao listar compras", e);
         }
-        return null;
+        return compras;
     }
 }
 

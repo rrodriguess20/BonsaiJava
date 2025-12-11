@@ -2,22 +2,26 @@ package model.dao.impl;
 
 import model.dao.ItemCompraDAO;
 import model.entities.ItemCompra;
-import java.util.List; 
+import model.exceptions.DatabaseException;
+import model.exceptions.EntityNotFoundException;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List; 
 
 public class ItemCompraDAOJDBC implements ItemCompraDAO {
     
-
-    Connection conn;
+    private final Connection conn;
 
     public ItemCompraDAOJDBC(Connection conn) {
         this.conn = conn;
     }
     @Override
     public void insert(ItemCompra itemCompra){
-        String sql = "INSERT INTO item_compra (id_produto, id_compra, quantidade, preco_unitario) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO item_compra (id_produto, id_compra, quantidade, preco_unitario) VALUES (?, ?, ?, ?)";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, itemCompra.getIdProduto());
             stmt.setInt(2, itemCompra.getIdCompra());
@@ -25,7 +29,7 @@ public class ItemCompraDAOJDBC implements ItemCompraDAO {
             stmt.setDouble(4, itemCompra.getPrecoUnitario());
             stmt.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DatabaseException("Erro ao inserir item de compra", e);
         }
     }
     @Override
@@ -37,9 +41,11 @@ public class ItemCompraDAOJDBC implements ItemCompraDAO {
             stmt.setInt(3, itemCompra.getQuantidade());
             stmt.setDouble(4, itemCompra.getPrecoUnitario());
             stmt.setInt(5, itemCompra.getId());
-            stmt.executeUpdate();
+            if(stmt.executeUpdate() == 0){
+                throw new EntityNotFoundException("Item de compra não encontrado para atualização: " + itemCompra.getId());
+            }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DatabaseException("Erro ao atualizar item de compra", e);
         }
     }
 
@@ -48,9 +54,11 @@ public class ItemCompraDAOJDBC implements ItemCompraDAO {
         String sql = "DELETE FROM item_compra WHERE id_item_compra = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
-            stmt.executeUpdate();
+            if(stmt.executeUpdate() == 0){
+                throw new EntityNotFoundException("Item de compra não encontrado para exclusão: " + id);
+            }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DatabaseException("Erro ao deletar item de compra", e);
         }
     
     }
@@ -60,29 +68,30 @@ public class ItemCompraDAOJDBC implements ItemCompraDAO {
         String sql = "SELECT * FROM item_compra WHERE id_item_compra = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
-            var rs = stmt.executeQuery();
-            if (rs.next()) {
-                ItemCompra itemCompra = new ItemCompra();
-                itemCompra.setId(rs.getInt("id"));
-                itemCompra.setIdProduto(rs.getInt("id_produto"));
-                itemCompra.setIdCompra(rs.getInt("id_compra"));
-                itemCompra.setQuantidade(rs.getInt("quantidade"));
-                itemCompra.setPrecoUnitario(rs.getDouble("preco_unitario"));
-                return itemCompra;
+            try(ResultSet rs = stmt.executeQuery()){
+                if (rs.next()) {
+                    ItemCompra itemCompra = new ItemCompra();
+                    itemCompra.setId(rs.getInt("id_item_compra"));
+                    itemCompra.setIdProduto(rs.getInt("id_produto"));
+                    itemCompra.setIdCompra(rs.getInt("id_compra"));
+                    itemCompra.setQuantidade(rs.getInt("quantidade"));
+                    itemCompra.setPrecoUnitario(rs.getDouble("preco_unitario"));
+                    return itemCompra;
+                }
             }
 
         }catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DatabaseException("Erro ao buscar item de compra por ID", e);
         }
-        return null;
+        throw new EntityNotFoundException("ItemCompra", id);
     }
 
     @Override
     public List<ItemCompra> findAll() {
         String sql = "SELECT * FROM item_compra";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            var rs = stmt.executeQuery();
-            List<ItemCompra> itemCompras = new java.util.ArrayList<>();
+        try (PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            List<ItemCompra> itemCompras = new ArrayList<>();
             while (rs.next()) {
                 ItemCompra itemCompra = new ItemCompra();
                 itemCompra.setId(rs.getInt("id_item_compra"));
@@ -94,7 +103,7 @@ public class ItemCompraDAOJDBC implements ItemCompraDAO {
             }
             return itemCompras;
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DatabaseException("Erro ao listar itens de compra", e);
         }
     }
     

@@ -4,6 +4,8 @@ import java.util.Scanner;
 
 import model.entities.Funcionario;
 import model.entities.Usuario;
+import model.exceptions.DatabaseException;
+import model.exceptions.EntityNotFoundException;
 import model.service.FuncionarioService;
 import model.service.UsuarioService;
 
@@ -92,12 +94,22 @@ public class FuncionarioController {
     public void buscarFuncionarioPorId(){
         System.out.println("Digite o ID do Funcionário que deseja buscar: ");
         int id = Integer.parseInt(sc.nextLine());
-        Funcionario funcionario = funcionarioService.buscarFuncionarioPorId(id);
-        if(funcionario == null){
+        try{
+            Funcionario funcionario = funcionarioService.buscarFuncionarioPorId(id);
+            funcionarioToString(funcionario);
+        }catch(EntityNotFoundException e){
             System.out.println("Funcionário não encontrado!");
+            System.out.println("Detalhes: " + e.getMessage());
+            return;
+        }catch(DatabaseException e){
+            System.out.println("Erro ao buscar funcionário! ");
+            System.out.println("Detalhes: " + e.getMessage());
+            return;
+        }catch(Exception e){
+            System.out.println("Ocorreu um erro inesperado ao buscar o funcionário.");
+            System.out.println("Detalhes: " + e.getMessage());
             return;
         }
-        funcionarioToString(funcionario);
     }
 
     public void funcionarioToString(Funcionario funcionario) {

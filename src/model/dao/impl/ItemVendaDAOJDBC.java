@@ -2,6 +2,8 @@ package model.dao.impl;
 
 import model.entities.ItemVenda;
 import model.dao.ItemVendaDAO;
+import model.exceptions.DatabaseException;
+import model.exceptions.EntityNotFoundException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -14,7 +16,7 @@ public class ItemVendaDAOJDBC implements ItemVendaDAO {
 
 
     
-    private Connection conn;
+    private final Connection conn;
 
     public ItemVendaDAOJDBC(Connection conn) {
         this.conn = conn;
@@ -30,7 +32,7 @@ public class ItemVendaDAOJDBC implements ItemVendaDAO {
             stmt.setDouble(4, itemVenda.getPreco_unitario());
             stmt.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DatabaseException("Erro ao inserir item de venda", e);
         }
     }
 
@@ -42,9 +44,11 @@ public class ItemVendaDAOJDBC implements ItemVendaDAO {
             stmt.setInt(3, itemVenda.getQuantidade());
             stmt.setDouble(4, itemVenda.getPreco_unitario());
             stmt.setInt(5, itemVenda.getId());
-            stmt.executeUpdate();
+            if(stmt.executeUpdate() == 0){
+                throw new EntityNotFoundException("Item de venda não encontrado para atualização: " + itemVenda.getId());
+            }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DatabaseException("Erro ao atualizar item de venda", e);
         }
     }
 
@@ -52,9 +56,11 @@ public class ItemVendaDAOJDBC implements ItemVendaDAO {
         String sql = "DELETE FROM item_venda WHERE id_item_venda = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
-            stmt.executeUpdate();
+            if(stmt.executeUpdate() == 0){
+                throw new EntityNotFoundException("Item de venda não encontrado para exclusão: " + id);
+            }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DatabaseException("Erro ao deletar item de venda", e);
         }
     }
 
@@ -62,20 +68,22 @@ public class ItemVendaDAOJDBC implements ItemVendaDAO {
         String sql = "SELECT * FROM item_venda WHERE id_item_venda = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return new ItemVenda(
-                    rs.getInt("id_item_venda"),
-                    rs.getInt("venda_id"),
-                    rs.getInt("produto_id"),
-                    rs.getInt("quantidade"),
-                    rs.getDouble("preco_unitario")
-                );
+            try(ResultSet rs = stmt.executeQuery()){
+                if (rs.next()) {
+                    ItemVenda itemVenda = new ItemVenda();
+                    itemVenda.setId(rs.getInt("id_item_venda"));
+                    itemVenda.setId_venda(rs.getInt("venda_id"));
+                    itemVenda.setId_produto(rs.getInt("produto_id"));
+                    itemVenda.setQuantidade(rs.getInt("quantidade"));
+                    itemVenda.setPreco_unitario(rs.getDouble("preco_unitario"));
+                    itemVenda.setSubtotal(rs.getDouble("subtotal"));
+                    return itemVenda;
+                }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DatabaseException("Erro ao buscar item de venda por ID", e);
         }
-        return null;
+        throw new EntityNotFoundException("ItemVenda", id);
     }
 
     @Override
@@ -86,10 +94,16 @@ public class ItemVendaDAOJDBC implements ItemVendaDAO {
              ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
                 ItemVenda itemVenda = new ItemVenda();
+                itemVenda.setId(rs.getInt("id_item_venda"));
+                itemVenda.setId_venda(rs.getInt("venda_id"));
+                itemVenda.setId_produto(rs.getInt("produto_id"));
+                itemVenda.setQuantidade(rs.getInt("quantidade"));
+                itemVenda.setPreco_unitario(rs.getDouble("preco_unitario"));
+                itemVenda.setSubtotal(rs.getDouble("subtotal"));
                 itemVendas.add(itemVenda);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DatabaseException("Erro ao listar itens de venda", e);
         }   
         return itemVendas;  
     }

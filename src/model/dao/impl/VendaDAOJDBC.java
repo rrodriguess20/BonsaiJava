@@ -5,6 +5,9 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import model.exceptions.DatabaseException;
+import model.exceptions.EntityNotFoundException;
+
 public class VendaDAOJDBC implements model.dao.VendaDAO {
 
     private Connection conn;
@@ -23,7 +26,7 @@ public class VendaDAOJDBC implements model.dao.VendaDAO {
             stmt.setDouble(3, venda.getTotal());
             stmt.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DatabaseException("Erro ao inserir venda", e);
         }
     }
 
@@ -34,18 +37,22 @@ public class VendaDAOJDBC implements model.dao.VendaDAO {
             stmt.setTimestamp(2, Timestamp.valueOf(venda.getDataVenda()));
             stmt.setDouble(3, venda.getTotal());
             stmt.setInt(4, venda.getId());
-            stmt.executeUpdate();
+            if(stmt.executeUpdate() == 0){
+                throw new EntityNotFoundException("Venda não encontrada para atualização: " + venda.getId());
+            }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DatabaseException("Erro ao atualizar venda", e);
         }
     }
     public void deleteById(int id) {
         String sql = "DELETE FROM venda WHERE id_venda = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
-            stmt.executeUpdate();
+            if(stmt.executeUpdate() == 0){
+                throw new EntityNotFoundException("Venda não encontrada para exclusão: " + id);
+            }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DatabaseException("Erro ao deletar venda", e);
         }
     }
 
@@ -53,20 +60,21 @@ public class VendaDAOJDBC implements model.dao.VendaDAO {
         String sql = "SELECT * FROM venda WHERE id_venda = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                Venda venda = new Venda();
-                venda.setId(rs.getInt("id_venda"));
-                venda.setDataVenda(rs.getTimestamp("data_venda").toLocalDateTime());
-                venda.setTotal(rs.getDouble("total"));               
-                FuncionarioDAOJDBC funcionarioDAO = new FuncionarioDAOJDBC(conn);
-                venda.setFuncionario(funcionarioDAO.findById(rs.getInt("id_funcionario")));
-                return venda;
+            try(ResultSet rs = stmt.executeQuery()){
+                if (rs.next()) {
+                    Venda venda = new Venda();
+                    venda.setId(rs.getInt("id_venda"));
+                    venda.setDataVenda(rs.getTimestamp("data_venda").toLocalDateTime());
+                    venda.setTotal(rs.getDouble("total"));               
+                    FuncionarioDAOJDBC funcionarioDAO = new FuncionarioDAOJDBC(conn);
+                    venda.setFuncionario(funcionarioDAO.findById(rs.getInt("id_funcionario")));
+                    return venda;
+                }
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DatabaseException("Erro ao buscar venda por ID", e);
         }
-        return null;
+        throw new EntityNotFoundException("Venda", id);
     }
 
     @Override
@@ -86,7 +94,7 @@ public class VendaDAOJDBC implements model.dao.VendaDAO {
             }
         }
         catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DatabaseException("Erro ao buscar todas as vendas", e);
         }
         return vendas;
     }
